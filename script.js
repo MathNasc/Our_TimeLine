@@ -69,10 +69,16 @@ const APP_DATA = {
 
   /* ── Linha do tempo (adicione ou remova momentos) ── */
   timeline: [
+    { 
+      titulo:    "O Nosso Match",
+      data:      APP_DATA_DATE("matchDate"), // usa datas acima
+      descricao: "O dia em que demos match (eu achava que ia ser ignorado).",
+      foto:      ""   // coloque o caminho da foto ou URL, ex: "fotos/encontro.jpg"
+    },
     {
       titulo:    "Primeiro Encontro",
       data:      APP_DATA_DATE("primeiroEncontro"), // usa datas acima
-      descricao: "Aquela noite que tudo começou. Eu mal conseguia acreditar que estava ali com você.",
+      descricao: "Aquela noite que tudo começou. Eu mal conseguia acreditar que estava ali com você. 💐🍫",
       foto:      ""   // coloque o caminho da foto ou URL, ex: "fotos/encontro.jpg"
     },
     {
@@ -150,6 +156,8 @@ function APP_DATA_DATE(key) {
 (function resolveTimelineDates() {
   const map = {
     "APP_DATA_DATE(\"primeiroEncontro\")":  APP_DATA.datas.primeiroEncontro,
+    "APP_DATA_DATE(\"matchDate\")":  
+APP_DATA.datas.matchDate,
     "APP_DATA_DATE(\"primeiroBeijo\")":     APP_DATA.datas.primeiroBeijo,
     "APP_DATA_DATE(\"pedidoNamoro\")":      APP_DATA.datas.pedidoNamoro,
     "APP_DATA_DATE(\"aniversario1Ano\")":   APP_DATA.datas.aniversario1Ano
