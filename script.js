@@ -12,17 +12,18 @@ const APP_DATA = {
 
   /* ── Nomes do casal ── */
   casal: {
-    meuNome:  "Gabriel",        // Seu nome
-    nomeDela: "Isabella",       // Nome dela
-    apelido:  "meu amor"        // Apelido carinhoso
+    meuNome:  "Matheus",        // Seu nome
+    nomeDela: "Marcela",       // Nome dela
+    apelido:  "Moi ❤️"        // Apelido carinhoso
   },
 
   /* ── Datas importantes ── */
   datas: {
-    primeiroEncontro: "14 de fevereiro de 2024",
-    primeiroBeijo:    "14 de fevereiro de 2024",
-    pedidoNamoro:     "21 de fevereiro de 2024",
-    aniversario1Ano:  "21 de fevereiro de 2025"
+    matchDate:        "27 de fevereiro de 2025",
+    primeiroEncontro: "22 de março de 2025",
+    primeiroBeijo:    "22 de março de 2025",
+    pedidoNamoro:     "01 de maio de 2025",
+    aniversario1Ano:  "01 de maio de 2026"
   },
 
   /* ── Textos personalizados ── */
@@ -38,10 +39,10 @@ const APP_DATA = {
   quiz: [
     {
       pergunta:  "Onde foi nosso primeiro encontro?",
-      opcoes:    ["No parque", "No restaurante italiano", "No cinema", "Na praia"],
+      opcoes:    ["Magia & Bruxaria", "Vassoura Quebrada", "Beco Hexagonal", "Casa dos Bruxos"],
       correta:   1,                     // índice da resposta correta (0 = primeira)
       acerto:    "Isso mesmo! 🥰 Como você se lembra de tudo...",
-      erro:      "Quase! Mas foi no restaurante italiano, lembra? 🍝"
+      erro:      "Quase! Mas foi no Vassoura Quebrada, lembra? 🪄"
     },
     {
       pergunta:  "Qual foi nossa primeira música juntos?",
