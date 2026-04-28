@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Nosso Primeiro Ano ❤️</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- Google Fonts: display serif + clean body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── LOADER ─── -->
+  <div id="loader" class="loader">
+    <div class="loader-heart">
+      <svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 85 C50 85 10 55 10 30 C10 15 22 5 35 5 C42 5 48 9 50 13 C52 9 58 5 65 5 C78 5 90 15 90 30 C90 55 50 85 50 85Z"/>
+      </svg>
+    </div>
+    <p class="loader-text">carregando nossa história...</p>
+  </div>
+
+  <!-- ─── MÚSICA ─── -->
+  <button id="music-btn" class="music-btn" title="Música" aria-label="Música">
+    <span class="music-icon">♪</span>
+  </button>
+  <audio id="bg-music" loop></audio>
+
+  <!-- ─── BARRA DE PROGRESSO GERAL ─── -->
+  <div id="progress-bar-wrap" class="progress-bar-wrap">
+    <div id="progress-bar" class="progress-bar"></div>
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!--  TELA 1 — CAPA                          -->
+  <!-- ════════════════════════════════════════ -->
+  <section class="screen active" id="screen-cover">
+    <div class="cover-bg" id="cover-bg"></div>
+    <div class="cover-overlay"></div>
+    <div class="cover-content">
+      <div class="cover-ornament">✦ ✦ ✦</div>
+      <h1 class="cover-title" id="cover-title">Nosso Primeiro Ano</h1>
+      <div class="cover-heart-icon">❤</div>
+      <p class="cover-subtitle" id="cover-subtitle"></p>
+      <div class="cover-date" id="cover-date"></div>
+      <button class="btn-primary" id="btn-start">
+        <span>Começar</span>
+        <div class="btn-ripple"></div>
+      </button>
+    </div>
+    <!-- Partículas flutuantes -->
+    <div class="particles" id="cover-particles"></div>
+  </section>
+
+  <!-- ════════════════════════════════════════ -->
+  <!--  TELA 2 — INTRODUÇÃO                    -->
+  <!-- ════════════════════════════════════════ -->
+  <section class="screen" id="screen-intro">
+    <div class="screen-bg-pattern"></div>
+    <div class="screen-content centered">
+      <div class="intro-ornament">— ❤ —</div>
+      <p class="intro-text" id="intro-text"></p>
+      <p class="intro-names" id="intro-names"></p>
+      <button class="btn-ghost" id="btn-intro-next">Continuar →</button>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════ -->
+  <!--  TELA 3 — QUIZ                          -->
+  <!-- ════════════════════════════════════════ -->
+  <section class="screen" id="screen-quiz">
+    <div class="screen-bg-pattern"></div>
+    <div class="screen-content">
+      <div class="quiz-header">
+        <h2 class="section-title">Quiz de Nós</h2>
+        <p class="section-subtitle">Você nos conhece?</p>
+      </div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-progress-bar" id="quiz-progress-bar"></div>
+        <span class="quiz-progress-label" id="quiz-progress-label">1 / 4</span>
+      </div>
+      <div class="quiz-card" id="quiz-card">
+        <p class="quiz-question" id="quiz-question"></p>
+        <div class="quiz-options" id="quiz-options"></div>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+      <div class="quiz-end hidden" id="quiz-end">
+        <div class="quiz-end-emoji">🎉</div>
+        <p class="quiz-end-text">Você conhece nossa história...<br>mas quero te lembrar dela também.</p>
+        <button class="btn-primary" id="btn-quiz-done">Ver nossa história →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════ -->
+  <!--  TELA 4 — LINHA DO TEMPO                -->
+  <!-- ════════════════════════════════════════ -->
+  <section class="screen" id="screen-timeline">
+    <div class="screen-content">
+      <div class="timeline-header">
+        <h2 class="section-title">Nossa História</h2>
+        <p class="section-subtitle">Cada momento que nos trouxe até aqui</p>
+      </div>
+      <div class="timeline-list" id="timeline-list"></div>
+      <div class="timeline-footer">
+        <button class="btn-primary" id="btn-timeline-next">Continuar →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════ -->
+  <!--  TELA 5 — IMPACTO PRINCIPAL             -->
+  <!-- ════════════════════════════════════════ -->
+  <section class="screen" id="screen-impact">
+    <div class="screen-bg-impact"></div>
+    <div class="screen-content centered">
+      <div class="impact-block" id="impact-block-1">
+        <p class="impact-text-before">Há um ano eu te dei</p>
+        <p class="impact-number">100</p>
+        <p class="impact-text-after">motivos por que eu te amo.</p>
+      </div>
+      <div class="impact-divider" id="impact-divider"></div>
+      <div class="impact-block hidden" id="impact-block-2">
+        <p class="impact-text-before">Hoje eu tenho</p>
+        <p class="impact-number">1000</p>
+        <p class="impact-text-after">motivos por que eu ainda te amo.</p>
+      </div>
+      <button class="btn-primary hidden" id="btn-open-motivos">
+        Abrir Motivos ❤
+      </button>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════ -->
+  <!--  TELA 6 — MOTIVOS                       -->
+  <!-- ════════════════════════════════════════ -->
+  <section class="screen" id="screen-motivos">
+    <div class="screen-bg-pattern"></div>
+    <div class="screen-content centered">
+      <h2 class="section-title">Por que eu te amo</h2>
+      <p class="section-subtitle">Um por um...</p>
+      <div class="motivo-card" id="motivo-card">
+        <div class="motivo-numero" id="motivo-numero">#1</div>
+        <p class="motivo-texto" id="motivo-texto"></p>
+      </div>
+      <div class="motivo-contador" id="motivo-contador">0 descobertos</div>
+      <button class="btn-primary" id="btn-next-motivo">Próximo Motivo ❤</button>
+      <button class="btn-ghost" id="btn-motivos-done">Já vi o suficiente...</button>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════ -->
+  <!--  TELA 7 — FINAL EMOCIONAL               -->
+  <!-- ════════════════════════════════════════ -->
+  <section class="screen" id="screen-final">
+    <div class="screen-bg-final"></div>
+    <div class="screen-content centered">
+      <div class="final-ornament">✦</div>
+      <p class="final-text-grande">O maior motivo sempre foi você existir.</p>
+      <div class="final-divider-heart">❤</div>
+      <p class="final-mensagem" id="final-mensagem"></p>
+      <p class="final-assinatura" id="final-assinatura"></p>
+      <button class="btn-primary" id="btn-reveal">Ver Surpresa 🎁</button>
+    </div>
+    <!-- Confetes -->
+    <div class="confetti-container" id="confetti-container"></div>
+  </section>
+
+  <!-- ════════════════════════════════════════ -->
+  <!--  TELA 8 — PRESENTE FINAL                -->
+  <!-- ════════════════════════════════════════ -->
+  <section class="screen" id="screen-presente">
+    <div class="screen-bg-pattern"></div>
+    <div class="screen-content centered">
+      <div class="presente-icon">🎁</div>
+      <h2 class="presente-titulo">Sua Surpresa</h2>
+      <div class="presente-card" id="presente-card">
+        <p class="presente-texto" id="presente-texto"></p>
+      </div>
+      <div class="presente-footer">
+        <p class="presente-extra">Com todo meu amor ❤</p>
+        <button class="btn-ghost restart-btn" id="btn-restart">Recomeçar do início ↺</button>
+      </div>
+    </div>
+    <!-- Corações flutuantes -->
+    <div class="hearts-container" id="hearts-container"></div>
+  </section>
+
+  <script src="script.js"></script>
+
+  <!-- Registro do Service Worker (PWA / offline) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .catch(() => {}); // silencioso se falhar
+      });
+    }
+  </script>
+</body>
+</html>
