@@ -43,7 +43,7 @@ const APP_DATA = {
       pergunta:  "Onde foi nosso primeiro encontro?",
       opcoes:    ["Magia & Bruxaria", "Vassoura Quebrada", "Beco Hexagonal", "Casa dos Bruxos"],
       correta:   1,                     // índice da resposta correta (0 = primeira)
-      acerto:    "Isso mesmo! 🥰 Como você se lembra de tudo...",
+      acerto:    "Acertou minha bruxinha! 🥰 Como você se lembra de tudo...",
       erro:      "Quase! Mas foi no Vassoura Quebrada, lembra? 🪄"
     },
     {
