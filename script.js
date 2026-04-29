@@ -352,7 +352,17 @@ function setupQuiz() {
 
 function renderQuizQuestion() {
   const q = APP_DATA.quiz[STATE.quizIndex];
-  if (!q) return;
+
+  // ✅ FIX: se quiz já foi concluído, mostra tela de fim em vez de card vazio
+  if (!q) {
+    const card   = $("quiz-card");
+    const pfwrap = $("quiz-progress-wrap");
+    const end    = $("quiz-end");
+    if (card)   card.classList.add("hidden");
+    if (pfwrap) pfwrap.classList.add("hidden");
+    if (end)    end.classList.remove("hidden");
+    return;
+  }
 
   const questionEl = $("quiz-question");
   const optionsEl  = $("quiz-options");
@@ -878,8 +888,11 @@ function loadProgress() {
     // Descomente abaixo para restaurar posição:
     // if (data.currentScreen) STATE.currentScreen = data.currentScreen;
 
-    if (typeof data.quizIndex === "number")  STATE.quizIndex  = data.quizIndex;
-    if (typeof data.quizScore === "number")  STATE.quizScore  = data.quizScore;
+    // ✅ FIX: reseta quiz se estava concluído (evita card vazio)
+    if (typeof data.quizIndex === "number") {
+      STATE.quizIndex = data.quizIndex >= APP_DATA.quiz.length ? 0 : data.quizIndex;
+    }
+    if (typeof data.quizScore === "number")   STATE.quizScore   = data.quizScore;
     if (typeof data.motivoAtual === "number") STATE.motivoAtual = data.motivoAtual;
   } catch (_) {}
 }
