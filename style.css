@@ -612,10 +612,12 @@ body {
   width: 100%;
   border-radius: 10px;
   margin-top: 14px;
-  aspect-ratio: 16/9;
+  max-height: 420px;
   object-fit: cover;
-  opacity: 0.9;
+  object-position: center top;
+  opacity: 0.92;
   border: 1px solid var(--border);
+  display: block;
 }
 
 .timeline-footer {

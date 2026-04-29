@@ -55,10 +55,10 @@ const APP_DATA = {
     },
     {
       pergunta:  "Qual foi nossa primeiro filme nos cinemas juntos?",
-      opcoes:    ["Lilo & Stitch", "Um Filme Minecraft", "Harry Potter e o Cálice de Fogo", "Piratas do Caribe"],
-      correta:   0,
-      acerto:    "La La Land! Combinava tanto com nós. 🎬",
-      erro:      "Foi La La Land! Você ainda fica emocionada no final... 😄"
+      opcoes:    ["Lilo & Stitch", "Harry Potter e o Cálice de Fogo", "Um Filme Minecraft", "Piratas do Caribe"],
+      correta:   2,
+      acerto:    "Um Filme Minecraft! Foi muito legal. 🎬",
+      erro:      "Foi Um Filme Minecraft!... 😄"
     },
     {
       pergunta:  "Qual é a nossa comidinha favorita?",
