@@ -81,7 +81,7 @@ const APP_DATA = {
       titulo:    "Primeiro Encontro",
       data:      APP_DATA_DATE("primeiroEncontro"), // usa datas acima
       descricao: "Aquela noite que tudo começou. Eu mal conseguia acreditar que estava ali com você. 💐🍫",
-      foto:      ""   // coloque o caminho da foto ou URL, ex: "fotos/encontro.jpg"
+      foto:      "fotos/primeiroEncontro.jpeg"   // coloque o caminho da foto ou URL, ex: "fotos/encontro.jpg"
     },
     {
       titulo:    "Primeiro Beijo",
@@ -99,13 +99,13 @@ const APP_DATA = {
       titulo:    "Nossa Primeira Viagem",
       data:      APP_DATA_DATE("primeiraViajem"),
       descricao: "Descobrir novos lugares ao seu lado foi incrível. Você torna qualquer lugar especial.",
-      foto:      ""
+      foto:      "fotos/primeiraViajem.jpeg"
     },
     {
       titulo:    "Um Dia Comum que Virou Especial",
       data:      APP_DATA_DATE("nossoAp"),
       descricao: "Naquele dia nada especial acontecia - mas compramos nossa casinha.",
-      foto:      ""
+      foto:      "fotos/nossoAp.jpeg"
     },
     {
       titulo:    "Nosso Primeiro Ano ❤️",
