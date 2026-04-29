@@ -34,7 +34,7 @@ const APP_DATA = {
     mensagemInicial: "Há um ano eu fiz uma das melhores escolhas da minha vida...",
     introducao:      "Eu escolhi você. E cada dia desde então me prova que foi a escolha mais certa que já fiz. Você mudou minha vida de formas que eu nem sabia que eram possíveis.",
     mensagemFinal:   "Feliz 1 ano, meu amor. Que venham muitos outros, sempre ao seu lado.",
-    localPresenteFinal: "Olha embaixo do seu travesseiro. 🌹"
+    localPresenteFinal: "SOU EU!!! 🌹"
   },
 
   /* ── Quiz (adicione ou remova perguntas à vontade) ── */
