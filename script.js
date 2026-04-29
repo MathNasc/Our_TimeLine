@@ -219,8 +219,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Configurar quiz
   setupQuiz();
-  // ✅ FIX Android: segundo render com delay para garantir que WebView pintou o DOM
-  setTimeout(() => renderQuizQuestion(), 300);
 
   // Configurar música
   setupMusic();
@@ -346,58 +344,74 @@ function populatePresente() {
 
 
 /* ══════════════════════════════════════════════════════
-   QUIZ
+   QUIZ — versão Android WebView bulletproof
+   Reconstrói o HTML completo a cada render para evitar
+   o bug de conteúdo sumindo em elementos hidden.
 ══════════════════════════════════════════════════════ */
 function setupQuiz() {
-  renderQuizQuestion();
+  // Apenas inicializa — o render real acontece ao entrar na tela
+  STATE.quizReady = false;
 }
 
 function renderQuizQuestion() {
+  const quizScreen = $("screen-quiz");
   const q = APP_DATA.quiz[STATE.quizIndex];
 
-  // ✅ FIX: se quiz já foi concluído, mostra tela de fim em vez de card vazio
+  // Quiz concluído: mostra tela de fim
   if (!q) {
-    const card   = $("quiz-card");
-    const pfwrap = $("quiz-progress-wrap");
-    const end    = $("quiz-end");
-    if (card)   card.classList.add("hidden");
-    if (pfwrap) pfwrap.classList.add("hidden");
-    if (end)    end.classList.remove("hidden");
+    showQuizEnd();
     return;
   }
 
-  const questionEl = $("quiz-question");
-  const optionsEl  = $("quiz-options");
-  const card       = $("quiz-card");
-  const feedback   = $("quiz-feedback");
-  const progress   = $("quiz-progress-bar");
-  const label      = $("quiz-progress-label");
+  // Monta o HTML do quiz inteiro de uma vez (evita bug Android com textContent)
+  const pct = Math.round((STATE.quizIndex / APP_DATA.quiz.length) * 100);
+  const label = `${STATE.quizIndex + 1} / ${APP_DATA.quiz.length}`;
 
-  if (questionEl) questionEl.textContent = q.pergunta;
-  if (feedback)   feedback.textContent   = "";
+  const opcoesHTML = q.opcoes.map((op, i) =>
+    `<button class="quiz-option" data-idx="${i}">${op}</button>`
+  ).join("");
 
-  // Progresso
-  const pct = (STATE.quizIndex / APP_DATA.quiz.length) * 100;
-  if (progress) progress.style.setProperty("--progress", `${pct}%`);
-  if (label)    label.textContent = `${STATE.quizIndex + 1} / ${APP_DATA.quiz.length}`;
+  // Reconstrói card inteiro via innerHTML (mais confiável no WebView)
+  const cardContainer = $("quiz-card-container");
+  if (cardContainer) {
+    cardContainer.innerHTML = `
+      <div class="quiz-progress-wrap">
+        <div class="quiz-progress-bar" style="--progress: ${pct}%"></div>
+        <span class="quiz-progress-label">${label}</span>
+      </div>
+      <div class="quiz-card" id="quiz-card">
+        <p class="quiz-question">${q.pergunta}</p>
+        <div class="quiz-options">${opcoesHTML}</div>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+    `;
 
-  // Opções
-  if (optionsEl) {
-    optionsEl.innerHTML = "";
-    q.opcoes.forEach((op, i) => {
-      const btn = document.createElement("button");
-      btn.className = "quiz-option";
-      btn.textContent = op;
-      btn.addEventListener("click", () => handleQuizAnswer(i, btn));
-      optionsEl.appendChild(btn);
+    // Adiciona eventos nos botões recém-criados
+    cardContainer.querySelectorAll(".quiz-option").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const idx = parseInt(btn.dataset.idx);
+        handleQuizAnswer(idx, btn, cardContainer);
+      });
     });
   }
+
+  STATE.quizReady = true;
 }
 
-function handleQuizAnswer(chosen, btnEl) {
+function showQuizEnd() {
+  const cardContainer = $("quiz-card-container");
+  if (cardContainer) cardContainer.innerHTML = "";
+
+  const end = $("quiz-end");
+  const header = document.querySelector("#screen-quiz .quiz-header");
+  if (end)    end.classList.remove("hidden");
+  if (header) header.classList.add("hidden");
+}
+
+function handleQuizAnswer(chosen, btnEl, container) {
   const q = APP_DATA.quiz[STATE.quizIndex];
-  const opts = $("quiz-options").querySelectorAll(".quiz-option");
-  const feedback = $("quiz-feedback");
+  const opts = (container || document).querySelectorAll(".quiz-option");
+  const feedback = (container || document).querySelector("#quiz-feedback") || $("quiz-feedback");
 
   // Desabilita todos
   opts.forEach(b => b.setAttribute("disabled", "true"));
@@ -406,7 +420,7 @@ function handleQuizAnswer(chosen, btnEl) {
   if (acertou) STATE.quizScore++;
 
   // Marca correto/errado
-  opts[q.correta].classList.add("correct");
+  if (opts[q.correta]) opts[q.correta].classList.add("correct");
   if (!acertou) btnEl.classList.add("wrong");
 
   // Feedback
@@ -734,8 +748,9 @@ function goToScreen(screenId) {
 function onScreenEnter(screenId) {
   switch (screenId) {
     case "screen-quiz":
-      // ✅ FIX Android: re-renderiza quiz ao entrar na tela
-      setTimeout(() => renderQuizQuestion(), 80);
+      renderQuizQuestion();
+      setTimeout(() => renderQuizQuestion(), 150);
+      setTimeout(() => renderQuizQuestion(), 500);
       break;
 
     case "screen-impact":
@@ -746,10 +761,6 @@ function onScreenEnter(screenId) {
       // Mostra primeiro motivo
       if (STATE.motivoAtual === null) {
         showNextMotivo();
-      } else {
-        // ✅ FIX Android: garante que motivo atual é visível
-        const textoEl = document.getElementById("motivo-texto");
-        if (textoEl && !textoEl.textContent) showNextMotivo();
       }
       break;
 
@@ -891,16 +902,6 @@ function saveProgress() {
 
 function loadProgress() {
   try {
-    // ✅ FIX: versão do cache — se mudar, limpa tudo automaticamente
-    const APP_VERSION = "v1.2";
-    const savedVersion = localStorage.getItem("nossoPrimeiroAno_version");
-    if (savedVersion !== APP_VERSION) {
-      localStorage.removeItem("nossoPrimeiroAno_progress");
-      localStorage.removeItem("motivosVistos");
-      localStorage.setItem("nossoPrimeiroAno_version", APP_VERSION);
-      return; // começa do zero
-    }
-
     const raw = localStorage.getItem("nossoPrimeiroAno_progress");
     if (!raw) return;
     const data = JSON.parse(raw);

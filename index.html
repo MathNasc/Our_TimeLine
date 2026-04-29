@@ -87,15 +87,10 @@
         <h2 class="section-title">Quiz de Nós</h2>
         <p class="section-subtitle">Você nos conhece?</p>
       </div>
-      <div class="quiz-progress-wrap">
-        <div class="quiz-progress-bar" id="quiz-progress-bar"></div>
-        <span class="quiz-progress-label" id="quiz-progress-label">1 / 4</span>
+      <!-- Quiz card container: reconstruído via JS a cada render (fix Android WebView) -->
+      <div id="quiz-card-container" style="-webkit-transform:translateZ(0);transform:translateZ(0);">
+        <!-- Conteúdo gerado pelo script.js via renderQuizQuestion() -->
       </div>
-      <div class="quiz-card" id="quiz-card">
-        <p class="quiz-question" id="quiz-question"></p>
-        <div class="quiz-options" id="quiz-options"></div>
-      </div>
-      <div class="quiz-feedback" id="quiz-feedback"></div>
       <div class="quiz-end hidden" id="quiz-end">
         <div class="quiz-end-emoji">🎉</div>
         <p class="quiz-end-text">Você conhece nossa história...<br>mas quero te lembrar dela também.</p>
@@ -197,6 +192,23 @@
     <!-- Corações flutuantes -->
     <div class="hearts-container" id="hearts-container"></div>
   </section>
+
+  
+  <!-- Força fullscreen no Android WebView/PWA -->
+  <script>
+    (function() {
+      function requestFS() {
+        const el = document.documentElement;
+        const fn = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+        if (fn) fn.call(el).catch(function(){});
+      }
+      // Tenta ao primeiro toque (necessário no Android)
+      document.addEventListener('touchstart', function handler() {
+        requestFS();
+        document.removeEventListener('touchstart', handler);
+      }, { once: true, passive: true });
+    })();
+  </script>
 
   <script src="script.js"></script>
 
