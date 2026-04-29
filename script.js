@@ -75,7 +75,7 @@ const APP_DATA = {
       titulo:    "O Nosso Match",
       data:      APP_DATA_DATE("matchDate"), // usa datas acima
       descricao: "O dia em que demos match (eu achava que ia ser ignorado).",
-      foto:      ""   // coloque o caminho da foto ou URL, ex: "fotos/encontro.jpg"
+      foto:      "fotos/its_a_match.jpg"   // coloque o caminho da foto ou URL, ex: "fotos/encontro.jpg"
     },
     {
       titulo:    "Primeiro Encontro",
