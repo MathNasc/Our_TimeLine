@@ -219,6 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Configurar quiz
   setupQuiz();
+  // ✅ FIX Android: segundo render com delay para garantir que WebView pintou o DOM
+  setTimeout(() => renderQuizQuestion(), 300);
 
   // Configurar música
   setupMusic();
@@ -731,6 +733,11 @@ function goToScreen(screenId) {
 
 function onScreenEnter(screenId) {
   switch (screenId) {
+    case "screen-quiz":
+      // ✅ FIX Android: re-renderiza quiz ao entrar na tela
+      setTimeout(() => renderQuizQuestion(), 80);
+      break;
+
     case "screen-impact":
       startImpactAnimation();
       break;
@@ -739,6 +746,10 @@ function onScreenEnter(screenId) {
       // Mostra primeiro motivo
       if (STATE.motivoAtual === null) {
         showNextMotivo();
+      } else {
+        // ✅ FIX Android: garante que motivo atual é visível
+        const textoEl = document.getElementById("motivo-texto");
+        if (textoEl && !textoEl.textContent) showNextMotivo();
       }
       break;
 
@@ -880,6 +891,16 @@ function saveProgress() {
 
 function loadProgress() {
   try {
+    // ✅ FIX: versão do cache — se mudar, limpa tudo automaticamente
+    const APP_VERSION = "v1.2";
+    const savedVersion = localStorage.getItem("nossoPrimeiroAno_version");
+    if (savedVersion !== APP_VERSION) {
+      localStorage.removeItem("nossoPrimeiroAno_progress");
+      localStorage.removeItem("motivosVistos");
+      localStorage.setItem("nossoPrimeiroAno_version", APP_VERSION);
+      return; // começa do zero
+    }
+
     const raw = localStorage.getItem("nossoPrimeiroAno_progress");
     if (!raw) return;
     const data = JSON.parse(raw);
