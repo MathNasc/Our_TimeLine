@@ -22,7 +22,9 @@ const APP_DATA = {
     matchDate:        "27 de fevereiro de 2025",
     primeiroEncontro: "22 de março de 2025",
     primeiroBeijo:    "22 de março de 2025",
+    primeiraViajem:   "01 de maio de 2025",
     pedidoNamoro:     "01 de maio de 2025",
+    nossoAp:          "11 de março de 2026",
     aniversario1Ano:  "01 de maio de 2026"
   },
 
@@ -45,25 +47,25 @@ const APP_DATA = {
       erro:      "Quase! Mas foi no Vassoura Quebrada, lembra? 🪄"
     },
     {
-      pergunta:  "Qual foi nossa primeira música juntos?",
-      opcoes:    ["Perfect - Ed Sheeran", "All of Me - John Legend", "Thinking Out Loud", "A Thousand Years"],
-      correta:   0,
-      acerto:    "Sim! Perfeita para nós dois. 🎶",
-      erro:      "Era Perfect, do Ed Sheeran! Nossa música. 🎵"
+      pergunta:  "Qual foi nossa primeira viagem juntos?",
+      opcoes:    ["Campos do Jordão", "Ubatuba", "Santos", "Paraty"],
+      correta:   3,
+      acerto:    "Sim! e ainda teve pedido de namoro. 💍",
+      erro:      "Nããããão! Foi quando começamos a namorar. 💍"
     },
     {
-      pergunta:  "Qual foi nosso primeiro filme juntos?",
-      opcoes:    ["Titanic", "La La Land", "Diário de uma Paixão", "Um Lugar Chamado Notting Hill"],
-      correta:   1,
+      pergunta:  "Qual foi nossa primeiro filme nos cinemas juntos?",
+      opcoes:    ["Lilo & Stitch", "Um Filme Minecraft", "Harry Potter e o Cálice de Fogo", "Piratas do Caribe"],
+      correta:   0,
       acerto:    "La La Land! Combinava tanto com nós. 🎬",
       erro:      "Foi La La Land! Você ainda fica emocionada no final... 😄"
     },
     {
-      pergunta:  "Qual é a frase que eu mais repito pra você?",
-      opcoes:    ["Eu te amo demais", "Você é minha preferida", "Te amo mais que tudo", "Você me faz feliz"],
+      pergunta:  "Qual é a nossa comidinha favorita?",
+      opcoes:    ["Pizza", "Hambúrguer", "Massa", "Batata Frita"],
       correta:   1,
-      acerto:    "Você é minha preferida. E sempre será. 💛",
-      erro:      "'Você é minha preferida' — e não existe ninguém mais. ❤️"
+      acerto:    "Essa é a nossa preferida. 💛",
+      erro:      "Essa era muito dificil, amamos todas ❤️"
     }
   ],
 
@@ -95,14 +97,14 @@ const APP_DATA = {
     },
     {
       titulo:    "Nossa Primeira Viagem",
-      data:      "Maio de 2024",
+      data:      APP_DATA_DATE("primeiraViajem"),
       descricao: "Descobrir novos lugares ao seu lado foi incrível. Você torna qualquer lugar especial.",
       foto:      ""
     },
     {
       titulo:    "Um Dia Comum que Virou Especial",
-      data:      "Agosto de 2024",
-      descricao: "Naquele dia nada especial acontecia — mas você estava ali, e isso foi suficiente.",
+      data:      APP_DATA_DATE("nossoAp"),
+      descricao: "Naquele dia nada especial acontecia - mas compramos nossa casinha.",
       foto:      ""
     },
     {
@@ -125,12 +127,11 @@ const APP_DATA = {
     "Porque você me conhece de verdade e mesmo assim me ama",
     "Porque quando estou com você, o tempo passa diferente",
     "Porque você transforma dias comuns em memórias",
-    "Porque você nunca me deixa ir dormir sem resolver as coisas",
     "Porque você é a pessoa mais bonita que eu já vi na vida",
     "Porque mesmo na distância, você está comigo",
-    "Porque você tem um coração imenso demais para um corpo só",
     "Porque você me faz rir até a barriga doer",
-    "Porque do seu jeito, você me salva todo dia"
+    "Porque do seu jeito, você me salva todo dia",
+    "Na verdade, aqui não estão os 1000 motivos, por que falta palavras no mundo para te descrever"
   ],
 
   /* ── Música de fundo ── */
@@ -155,17 +156,21 @@ function APP_DATA_DATE(key) {
 // Resolve datas na timeline após APP_DATA estar definido
 (function resolveTimelineDates() {
   const map = {
+    "APP_DATA_DATE(\"matchDate\")":         APP_DATA.datas.matchDate,
     "APP_DATA_DATE(\"primeiroEncontro\")":  APP_DATA.datas.primeiroEncontro,
-    "APP_DATA_DATE(\"matchDate\")":  
-APP_DATA.datas.matchDate,
     "APP_DATA_DATE(\"primeiroBeijo\")":     APP_DATA.datas.primeiroBeijo,
+    "APP_DATA_DATE(\"primeiraViajem\")":    APP_DATA.datas.primeiraViajem,
     "APP_DATA_DATE(\"pedidoNamoro\")":      APP_DATA.datas.pedidoNamoro,
+    "APP_DATA_DATE(\"nossoAp\")":           APP_DATA.datas.nossoAp,
     "APP_DATA_DATE(\"aniversario1Ano\")":   APP_DATA.datas.aniversario1Ano
   };
-  APP_DATA.timeline[0].data = APP_DATA.datas.primeiroEncontro;
-  APP_DATA.timeline[1].data = APP_DATA.datas.primeiroBeijo;
-  APP_DATA.timeline[2].data = APP_DATA.datas.pedidoNamoro;
-  APP_DATA.timeline[5].data = APP_DATA.datas.aniversario1Ano;
+  APP_DATA.timeline[0].data = APP_DATA.datas.matchDate;
+  APP_DATA.timeline[1].data = APP_DATA.datas.primeiroEncontro;
+  APP_DATA.timeline[2].data = APP_DATA.datas.primeiroBeijo;
+  APP_DATA.timeline[3].data = APP_DATA.datas.primeiraViajem;
+  APP_DATA.timeline[4].data = APP_DATA.datas.pedidoNamoro;
+  APP_DATA.timeline[5].data = APP_DATA.datas.nossoAp;
+  APP_DATA.timeline[6].data = APP_DATA.datas.aniversario1Ano;
 })();
 
 /* ══════════════════════════════════════════════════════
