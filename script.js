@@ -1,23 +1,17 @@
 /* ══════════════════════════════════════════════════════
    NOSSO PRIMEIRO ANO ❤️ — script.js
    ──────────────────────────────────────────────────────
-   PARA PERSONALIZAR: edite apenas o objeto APP_DATA abaixo.
-   Não é necessário mexer no restante do código.
+   TIP: Use o Painel Admin (admin/index.html) para editar
+   os dados e exporte o APP_DATA atualizado.
+   Você também pode editar o objeto APP_DATA diretamente.
 ══════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════════════════
-   ██████████  APP_DATA — EDITE AQUI  ██████████
-   ═══════════════════════════════════════════════════ */
 const APP_DATA = {
-
-  /* ── Nomes do casal ── */
   casal: {
-    meuNome:  "Matheus",        // Seu nome
-    nomeDela: "Marcela",       // Nome dela
-    apelido:  "Moi ❤️"        // Apelido carinhoso
+    meuNome:  "Matheus",
+    nomeDela: "Marcela",
+    apelido:  "Moi ❤️"
   },
-
-  /* ── Datas importantes ── */
   datas: {
     matchDate:        "27 de fevereiro de 2025",
     primeiroEncontro: "22 de março de 2025",
@@ -27,95 +21,87 @@ const APP_DATA = {
     nossoAp:          "11 de março de 2026",
     aniversario1Ano:  "01 de maio de 2026"
   },
-
-  /* ── Textos personalizados ── */
   textos: {
     subtitulo:       "Uma pequena experiência para a pessoa mais importante da minha vida.",
     mensagemInicial: "Há um ano eu fiz uma das melhores escolhas da minha vida...",
-    introducao:      "Eu escolhi você. E cada dia desde então me prova que foi a escolha mais certa que já fiz. Você mudou minha vida de formas que eu nem sabia que eram possíveis.",
+    introducao:      "Eu escolhi você. E cada dia desde então me prova que foi a escolha mais certa que já fiz.",
     mensagemFinal:   "Feliz 1 ano, meu amor. Que venham muitos outros, sempre ao seu lado.",
     localPresenteFinal: "SOU EU!!! 🌹"
   },
-
-  /* ── Quiz (adicione ou remova perguntas à vontade) ── */
   quiz: [
     {
-      pergunta:  "Onde foi nosso primeiro encontro?",
-      opcoes:    ["Magia & Bruxaria", "Vassoura Quebrada", "Beco Hexagonal", "Casa dos Bruxos"],
-      correta:   1,                     // índice da resposta correta (0 = primeira)
-      acerto:    "Acertou minha bruxinha! 🥰 Como você se lembra de tudo...",
-      erro:      "Quase! Mas foi no Vassoura Quebrada, lembra? 🪄"
+      pergunta: "Onde foi nosso primeiro encontro?",
+      opcoes:   ["Magia & Bruxaria", "Vassoura Quebrada", "Beco Hexagonal", "Casa dos Bruxos"],
+      correta:  1,
+      acerto:   "Acertou minha bruxinha! 🥰",
+      erro:     "Quase! Mas foi no Vassoura Quebrada, lembra? 🪄"
     },
     {
-      pergunta:  "Qual foi nossa primeira viagem juntos?",
-      opcoes:    ["Campos do Jordão", "Ubatuba", "Santos", "Paraty"],
-      correta:   3,
-      acerto:    "Sim! e ainda teve pedido de namoro. 💍",
-      erro:      "Nããããão! Foi quando começamos a namorar. 💍"
+      pergunta: "Qual foi nossa primeira viagem juntos?",
+      opcoes:   ["Campos do Jordão", "Ubatuba", "Santos", "Paraty"],
+      correta:  3,
+      acerto:   "Sim! e ainda teve pedido de namoro. 💍",
+      erro:     "Nãão! Foi quando começamos a namorar. 💍"
     },
     {
-      pergunta:  "Qual foi nossa primeiro filme nos cinemas juntos?",
-      opcoes:    ["Lilo & Stitch", "Harry Potter e o Cálice de Fogo", "Um Filme Minecraft", "Piratas do Caribe"],
-      correta:   2,
-      acerto:    "Um Filme Minecraft! Foi muito legal. 🎬",
-      erro:      "Foi Um Filme Minecraft!... 😄"
+      pergunta: "Qual foi nosso primeiro filme nos cinemas juntos?",
+      opcoes:   ["Lilo & Stitch", "Harry Potter e o Cálice de Fogo", "Um Filme Minecraft", "Piratas do Caribe"],
+      correta:  2,
+      acerto:   "Um Filme Minecraft! Foi muito legal. 🎬",
+      erro:     "Foi Um Filme Minecraft!... 😄"
     },
     {
-      pergunta:  "Qual é a nossa comidinha favorita?",
-      opcoes:    ["Pizza", "Hambúrguer", "Massa", "Batata Frita"],
-      correta:   1,
-      acerto:    "Essa é a nossa preferida. 💛",
-      erro:      "Essa era muito dificil, amamos todas ❤️"
+      pergunta: "Qual é a nossa comidinha favorita?",
+      opcoes:   ["Pizza", "Hambúrguer", "Massa", "Batata Frita"],
+      correta:  1,
+      acerto:   "Essa é a nossa preferida. 💛",
+      erro:     "Essa era muito difícil, amamos todas ❤️"
     }
   ],
-
-  /* ── Linha do tempo (adicione ou remova momentos) ── */
   timeline: [
-    { 
+    {
       titulo:    "O Nosso Match",
-      data:      APP_DATA_DATE("matchDate"), // usa datas acima
+      data:      "",
       descricao: "O dia em que demos match (eu achava que ia ser ignorado).",
-      foto:      "fotos/its_a_match.jpg"   // coloque o caminho da foto ou URL, ex: "fotos/encontro.jpg"
+      foto:      "fotos/its_a_match.jpg"
     },
     {
       titulo:    "Primeiro Encontro",
-      data:      APP_DATA_DATE("primeiroEncontro"), // usa datas acima
-      descricao: "Aquela noite que tudo começou. Eu mal conseguia acreditar que estava ali com você. 💐🍫",
-      foto:      "fotos/primeiroEncontro.jpeg"   // coloque o caminho da foto ou URL, ex: "fotos/encontro.jpg"
+      data:      "",
+      descricao: "Aquela noite que tudo começou. 💐🍫",
+      foto:      "fotos/primeiroEncontro.jpeg"
     },
     {
       titulo:    "Primeiro Beijo",
-      data:      APP_DATA_DATE("primeiroBeijo"),
+      data:      "",
       descricao: "O beijo que selou tudo. Meu coração acelerou de um jeito que nunca mais parou.",
       foto:      ""
     },
     {
       titulo:    "O Pedido de Namoro",
-      data:      APP_DATA_DATE("pedidoNamoro"),
-      descricao: "Quando eu oficialmente te escolhi e você me escolheu de volta. Um dos momentos mais bonitos da minha vida.",
+      data:      "",
+      descricao: "Quando eu oficialmente te escolhi e você me escolheu de volta.",
       foto:      ""
     },
     {
       titulo:    "Nossa Primeira Viagem",
-      data:      APP_DATA_DATE("primeiraViajem"),
-      descricao: "Descobrir novos lugares ao seu lado foi incrível. Você torna qualquer lugar especial.",
+      data:      "",
+      descricao: "Descobrir novos lugares ao seu lado foi incrível.",
       foto:      "fotos/primeiraViajem.jpeg"
     },
     {
-      titulo:    "Um Dia Comum que Virou Especial",
-      data:      APP_DATA_DATE("nossoAp"),
-      descricao: "Naquele dia nada especial acontecia - mas compramos nossa casinha.",
+      titulo:    "Nosso Apartamento",
+      data:      "",
+      descricao: "Naquele dia compramos nossa casinha.",
       foto:      "fotos/nossoAp.jpeg"
     },
     {
       titulo:    "Nosso Primeiro Ano ❤️",
-      data:      APP_DATA_DATE("aniversario1Ano"),
+      data:      "",
       descricao: "Hoje. Um ano inteiro de você. E eu ainda escolho você todos os dias.",
       foto:      ""
     }
   ],
-
-  /* ── Motivos (adicione quantos quiser) ── */
   motivos: [
     "Porque você ri do meu jeito torto de contar histórias",
     "Porque você me abraça sem eu precisar pedir",
@@ -131,250 +117,114 @@ const APP_DATA = {
     "Porque mesmo na distância, você está comigo",
     "Porque você me faz rir até a barriga doer",
     "Porque do seu jeito, você me salva todo dia",
-    "Na verdade, aqui não estão os 1000 motivos, por que falta palavras no mundo para te descrever"
+    "Na verdade, faltam palavras no mundo para te descrever"
   ],
-
-  /* ── Música de fundo ── */
   musicas: {
-    ativada:  true,
-    arquivo:  ""   // coloque o caminho do MP3: ex: "musica.mp3"
-                   // deixe vazio para desativar
+    ativada: true,
+    arquivo: ""
   },
-
-  /* ── Fotos gerais ── */
   fotosGerais: {
-    capa:   "",    // foto da tela inicial, ex: "fotos/capa.jpg"
-    fundo:  ""
+    capa:  "",
+    fundo: ""
   }
 };
 
-/* ─── Helper interno (não editar) ─── */
-function APP_DATA_DATE(key) {
-  return ""; // resolvido abaixo após definição completa
-}
-
-// Resolve datas na timeline após APP_DATA estar definido
-(function resolveTimelineDates() {
-  const map = {
-    "APP_DATA_DATE(\"matchDate\")":         APP_DATA.datas.matchDate,
-    "APP_DATA_DATE(\"primeiroEncontro\")":  APP_DATA.datas.primeiroEncontro,
-    "APP_DATA_DATE(\"primeiroBeijo\")":     APP_DATA.datas.primeiroBeijo,
-    "APP_DATA_DATE(\"primeiraViajem\")":    APP_DATA.datas.primeiraViajem,
-    "APP_DATA_DATE(\"pedidoNamoro\")":      APP_DATA.datas.pedidoNamoro,
-    "APP_DATA_DATE(\"nossoAp\")":           APP_DATA.datas.nossoAp,
-    "APP_DATA_DATE(\"aniversario1Ano\")":   APP_DATA.datas.aniversario1Ano
-  };
-  APP_DATA.timeline[0].data = APP_DATA.datas.matchDate;
-  APP_DATA.timeline[1].data = APP_DATA.datas.primeiroEncontro;
-  APP_DATA.timeline[2].data = APP_DATA.datas.primeiroBeijo;
-  APP_DATA.timeline[3].data = APP_DATA.datas.primeiraViajem;
-  APP_DATA.timeline[4].data = APP_DATA.datas.pedidoNamoro;
-  APP_DATA.timeline[5].data = APP_DATA.datas.nossoAp;
-  APP_DATA.timeline[6].data = APP_DATA.datas.aniversario1Ano;
+/* ── Resolve datas na timeline ── */
+(function() {
+  const ds = APP_DATA.datas;
+  const order = ["matchDate","primeiroEncontro","primeiroBeijo","pedidoNamoro","primeiraViajem","nossoAp","aniversario1Ano"];
+  order.forEach((k, i) => { if (APP_DATA.timeline[i]) APP_DATA.timeline[i].data = ds[k] || ""; });
 })();
 
-/* ══════════════════════════════════════════════════════
-   FIM DA CONFIGURAÇÃO — não editar abaixo desta linha
-══════════════════════════════════════════════════════ */
-
-
-/* ─── STATE ─── */
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
 const STATE = {
   currentScreen: "screen-cover",
-  quizIndex:     0,
-  quizScore:     0,
-  motivosVistos: new Set(),
-  motivoAtual:   null,
-  screenOrder: [
-    "screen-cover",
-    "screen-intro",
-    "screen-quiz",
-    "screen-timeline",
-    "screen-impact",
-    "screen-motivos",
-    "screen-final",
-    "screen-presente"
-  ],
+  quizIndex: 0, quizScore: 0,
+  motivosVistos: new Set(), motivoAtual: null,
+  screenOrder: ["screen-cover","screen-intro","screen-quiz","screen-timeline","screen-impact","screen-motivos","screen-final","screen-presente"],
   musicPlaying: false
 };
 
-/* ─── ELEMENTOS ─── */
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-
-/* ══════════════════════════════════════════════════════
-   INICIALIZAÇÃO
-══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", () => {
-  // Restaurar progresso
   loadProgress();
-
-  // Popular dados
-  populateCover();
-  populateIntro();
-  populateTimeline();
-  populateMotivos();
-  populateFinal();
-  populatePresente();
-
-  // Configurar quiz
-  setupQuiz();
-
-  // Configurar música
-  setupMusic();
-
-  // Configurar botões principais
-  setupButtons();
-
-  // Criar partículas da capa
+  populateCover(); populateIntro(); populateTimeline();
+  populateMotivos(); populateFinal(); populatePresente();
+  setupQuiz(); setupMusic(); setupButtons();
   createParticles("cover-particles", 18);
-
-  // Esconder loader
-  setTimeout(() => {
-    $("loader").classList.add("hidden");
-    showMusicBtn();
-  }, 2400);
-
-  // Configurar barra de progresso geral
+  setTimeout(() => { $("loader").classList.add("hidden"); showMusicBtn(); }, 2400);
   updateProgressBar();
 });
 
-
-/* ══════════════════════════════════════════════════════
-   POPULAR TELAS COM APP_DATA
-══════════════════════════════════════════════════════ */
-
 function populateCover() {
-  // Título e subtítulo
-  const title = $("cover-title");
-  if (title) title.textContent = "Nosso Primeiro Ano ❤️";
-
-  const subtitle = $("cover-subtitle");
-  if (subtitle) subtitle.textContent = APP_DATA.textos.subtitulo;
-
-  const date = $("cover-date");
-  if (date) date.textContent = APP_DATA.datas.aniversario1Ano;
-
-  // Foto de capa
+  const t = $("cover-title"); if (t) t.textContent = "Nosso Primeiro Ano ❤️";
+  const s = $("cover-subtitle"); if (s) s.textContent = APP_DATA.textos.subtitulo;
+  const d = $("cover-date"); if (d) d.textContent = APP_DATA.datas.aniversario1Ano;
   const bg = $("cover-bg");
-  if (bg && APP_DATA.fotosGerais.capa) {
-    bg.style.backgroundImage = `url('${APP_DATA.fotosGerais.capa}')`;
-    bg.style.display = "block";
-  } else if (bg) {
-    // Fundo gradiente romântico se não houver foto
-    bg.style.background = `
-      radial-gradient(ellipse 80% 80% at 50% 30%, rgba(192,96,112,0.3) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 60% at 80% 80%, rgba(201,169,110,0.15) 0%, transparent 60%),
-      #0a0a0f
-    `;
-  }
+  if (bg && APP_DATA.fotosGerais.capa) { bg.style.backgroundImage = `url('${APP_DATA.fotosGerais.capa}')`; bg.style.display = "block"; }
 }
 
 function populateIntro() {
-  const introText = $("intro-text");
-  if (introText) introText.textContent = APP_DATA.textos.mensagemInicial;
-
-  const introNames = $("intro-names");
-  if (introNames) {
-    introNames.textContent = `${APP_DATA.casal.meuNome} & ${APP_DATA.casal.nomeDela}`;
-  }
+  const it = $("intro-text"); if (it) it.textContent = APP_DATA.textos.mensagemInicial;
+  const in_ = $("intro-names"); if (in_) in_.textContent = `${APP_DATA.casal.meuNome} & ${APP_DATA.casal.nomeDela}`;
 }
 
 function populateTimeline() {
-  const list = $("timeline-list");
-  if (!list) return;
+  const list = $("timeline-list"); if (!list) return;
   list.innerHTML = "";
-
   APP_DATA.timeline.forEach((item, i) => {
     const el = document.createElement("div");
     el.className = "timeline-item";
     el.style.transitionDelay = `${i * 0.08}s`;
-
-    const imgHtml = item.foto
-      ? `<img class="timeline-card-img" src="${item.foto}" alt="${item.titulo}" loading="lazy" />`
-      : "";
-
     el.innerHTML = `
       <div class="timeline-dot"></div>
       <div class="timeline-card">
         <div class="timeline-card-date">${item.data}</div>
         <div class="timeline-card-title">${item.titulo}</div>
         <p class="timeline-card-desc">${item.descricao}</p>
-        ${imgHtml}
-      </div>
-    `;
+        ${item.foto ? `<img class="timeline-card-img" src="${item.foto}" alt="${item.titulo}" loading="lazy" />` : ""}
+      </div>`;
     list.appendChild(el);
   });
-
-  // Observer para animação ao scroll
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) e.target.classList.add("visible");
-    });
-  }, { threshold: 0.15 });
-
-  list.querySelectorAll(".timeline-item").forEach(el => observer.observe(el));
+  const obs = new IntersectionObserver(e => e.forEach(x => { if (x.isIntersecting) x.target.classList.add("visible"); }), { threshold: 0.15 });
+  list.querySelectorAll(".timeline-item").forEach(el => obs.observe(el));
 }
 
 function populateMotivos() {
-  // Carrega motivos vistos do localStorage
   const saved = localStorage.getItem("motivosVistos");
-  if (saved) {
-    try {
-      const arr = JSON.parse(saved);
-      arr.forEach(i => STATE.motivosVistos.add(i));
-    } catch (_) {}
-  }
-
+  if (saved) { try { JSON.parse(saved).forEach(i => STATE.motivosVistos.add(i)); } catch(_) {} }
   updateMotivosContador();
 }
 
 function populateFinal() {
-  const msg = $("final-mensagem");
-  if (msg) msg.textContent = APP_DATA.textos.mensagemFinal;
-
-  const assin = $("final-assinatura");
-  if (assin) assin.textContent = `— ${APP_DATA.casal.meuNome}`;
+  const m = $("final-mensagem"); if (m) m.textContent = APP_DATA.textos.mensagemFinal;
+  const a = $("final-assinatura"); if (a) a.textContent = `— ${APP_DATA.casal.meuNome}`;
 }
 
 function populatePresente() {
-  const texto = $("presente-texto");
-  if (texto) texto.textContent = APP_DATA.textos.localPresenteFinal;
+  const t = $("presente-texto"); if (t) t.textContent = APP_DATA.textos.localPresenteFinal;
 }
 
-
-/* ══════════════════════════════════════════════════════
-   QUIZ — versão Android WebView bulletproof
-   Reconstrói o HTML completo a cada render para evitar
-   o bug de conteúdo sumindo em elementos hidden.
-══════════════════════════════════════════════════════ */
-function setupQuiz() {
-  // Apenas inicializa — o render real acontece ao entrar na tela
-  STATE.quizReady = false;
-}
+/* ═══════════════════════════════════════════
+   QUIZ
+═══════════════════════════════════════════ */
+function setupQuiz() { STATE.quizReady = false; }
 
 function renderQuizQuestion() {
-  const quizScreen = $("screen-quiz");
   const q = APP_DATA.quiz[STATE.quizIndex];
-
-  // Quiz concluído: mostra tela de fim
-  if (!q) {
-    showQuizEnd();
-    return;
-  }
-
-  // Monta o HTML do quiz inteiro de uma vez (evita bug Android com textContent)
+  if (!q) { showQuizEnd(); return; }
   const pct = Math.round((STATE.quizIndex / APP_DATA.quiz.length) * 100);
   const label = `${STATE.quizIndex + 1} / ${APP_DATA.quiz.length}`;
-
-  const opcoesHTML = q.opcoes.map((op, i) =>
-    `<button class="quiz-option" data-idx="${i}">${op}</button>`
-  ).join("");
-
-  // Reconstrói card inteiro via innerHTML (mais confiável no WebView)
-  const cardContainer = $("quiz-card-container");
-  if (cardContainer) {
-    cardContainer.innerHTML = `
+  const opcoesHTML = q.opcoes.map((op, i) => `<button class="quiz-option" data-idx="${i}">${op}</button>`).join("");
+  const cc = $("quiz-card-container");
+  if (cc) {
+    cc.innerHTML = `
       <div class="quiz-progress-wrap">
         <div class="quiz-progress-bar" style="--progress: ${pct}%"></div>
         <span class="quiz-progress-label">${label}</span>
@@ -383,659 +233,257 @@ function renderQuizQuestion() {
         <p class="quiz-question">${q.pergunta}</p>
         <div class="quiz-options">${opcoesHTML}</div>
       </div>
-      <div class="quiz-feedback" id="quiz-feedback"></div>
-    `;
-
-    // Adiciona eventos nos botões recém-criados
-    cardContainer.querySelectorAll(".quiz-option").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const idx = parseInt(btn.dataset.idx);
-        handleQuizAnswer(idx, btn, cardContainer);
-      });
+      <div class="quiz-feedback" id="quiz-feedback"></div>`;
+    cc.querySelectorAll(".quiz-option").forEach(btn => {
+      btn.addEventListener("click", () => handleQuizAnswer(parseInt(btn.dataset.idx), btn, cc));
     });
   }
-
-  STATE.quizReady = true;
 }
 
 function showQuizEnd() {
-  const cardContainer = $("quiz-card-container");
-  if (cardContainer) cardContainer.innerHTML = "";
-
-  const end = $("quiz-end");
-  const header = document.querySelector("#screen-quiz .quiz-header");
-  if (end)    end.classList.remove("hidden");
-  if (header) header.classList.add("hidden");
+  const cc = $("quiz-card-container"); if (cc) cc.innerHTML = "";
+  const end = $("quiz-end"); if (end) end.classList.remove("hidden");
+  const hdr = document.querySelector("#screen-quiz .quiz-header"); if (hdr) hdr.classList.add("hidden");
 }
 
 function handleQuizAnswer(chosen, btnEl, container) {
   const q = APP_DATA.quiz[STATE.quizIndex];
   const opts = (container || document).querySelectorAll(".quiz-option");
-  const feedback = (container || document).querySelector("#quiz-feedback") || $("quiz-feedback");
-
-  // Desabilita todos
+  const fb = (container || document).querySelector("#quiz-feedback");
   opts.forEach(b => b.setAttribute("disabled", "true"));
-
   const acertou = chosen === q.correta;
   if (acertou) STATE.quizScore++;
-
-  // Marca correto/errado
   if (opts[q.correta]) opts[q.correta].classList.add("correct");
   if (!acertou) btnEl.classList.add("wrong");
-
-  // Feedback
-  if (feedback) {
-    feedback.textContent = acertou
-      ? (q.acerto || "Acertou! 🥰")
-      : (q.erro   || "Quase! Mas erramos juntos também. 😄");
-    feedback.style.opacity = "1";
-  }
-
-  // Próxima pergunta após 1.8s
+  if (fb) { fb.textContent = acertou ? (q.acerto || "Acertou! 🥰") : (q.erro || "Quase! 😄"); fb.style.opacity = "1"; }
   setTimeout(() => {
     STATE.quizIndex++;
-
     if (STATE.quizIndex >= APP_DATA.quiz.length) {
-      // Quiz terminou
-      const card  = $("quiz-card");
-      const end   = $("quiz-end");
-      const pfwrap = $("quiz-progress-wrap");
-
-      if (card)   { card.classList.add("flip-out"); setTimeout(() => card.classList.add("hidden"), 400); }
-      if (pfwrap) pfwrap.classList.add("hidden");
-      setTimeout(() => {
-        if (end) end.classList.remove("hidden");
-      }, 500);
-
+      const card = $("quiz-card"); const end = $("quiz-end");
+      if (card) { card.classList.add("flip-out"); setTimeout(() => card.classList.add("hidden"), 400); }
+      setTimeout(() => { if (end) end.classList.remove("hidden"); }, 500);
       saveProgress();
     } else {
-      // Anima saída do card
       const card = $("quiz-card");
       if (card) {
         card.classList.add("flip-out");
-        setTimeout(() => {
-          card.classList.remove("flip-out");
-          if (feedback) feedback.textContent = "";
-          renderQuizQuestion();
-        }, 400);
-      } else {
-        renderQuizQuestion();
-      }
+        setTimeout(() => { card.classList.remove("flip-out"); if (fb) fb.textContent = ""; renderQuizQuestion(); }, 400);
+      } else { renderQuizQuestion(); }
     }
   }, 1800);
 }
 
-
-/* ══════════════════════════════════════════════════════
-   TIMELINE — SCROLL ANIMATION
-══════════════════════════════════════════════════════ */
-// Já configurado no populateTimeline via IntersectionObserver
-
-
-/* ══════════════════════════════════════════════════════
-   TELA IMPACTO — Animação sequencial
-══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   IMPACT
+═══════════════════════════════════════════ */
 function startImpactAnimation() {
-  const block1   = $("impact-block-1");
-  const divider  = $("impact-divider");
-  const block2   = $("impact-block-2");
-  const btnMotiv = $("btn-open-motivos");
-
-  if (block1) block1.style.animation = "impact-reveal 0.8s cubic-bezier(0,0,0.2,1) forwards";
-
-  // Após 2s: expande divisor
-  setTimeout(() => {
-    if (divider) divider.classList.add("expanded");
-  }, 2000);
-
-  // Após 3s: bloco 2
-  setTimeout(() => {
-    if (block2) block2.classList.remove("hidden");
-    block2 && (block2.style.animation = "impact-reveal 1s cubic-bezier(0,0,0.2,1) forwards");
-  }, 3000);
-
-  // Após 4.5s: botão
-  setTimeout(() => {
-    if (btnMotiv) btnMotiv.classList.remove("hidden");
-    btnMotiv && (btnMotiv.style.animation = "fade-up 0.7s cubic-bezier(0,0,0.2,1) forwards");
-  }, 4500);
+  const b1 = $("impact-block-1"), div = $("impact-divider"), b2 = $("impact-block-2"), btn = $("btn-open-motivos");
+  if (b1) b1.style.animation = "impact-reveal 0.8s cubic-bezier(0,0,0.2,1) forwards";
+  setTimeout(() => { if (div) div.classList.add("expanded"); }, 2000);
+  setTimeout(() => { if (b2) { b2.classList.remove("hidden"); b2.style.animation = "impact-reveal 1s cubic-bezier(0,0,0.2,1) forwards"; } }, 3000);
+  setTimeout(() => { if (btn) { btn.classList.remove("hidden"); btn.style.animation = "fade-up 0.7s cubic-bezier(0,0,0.2,1) forwards"; } }, 4500);
 }
 
-
-/* ══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    MOTIVOS
-══════════════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
 function showNextMotivo() {
   const motivos = APP_DATA.motivos;
-  const card    = $("motivo-card");
-  const numEl   = $("motivo-numero");
-  const textoEl = $("motivo-texto");
-  const btnDone = $("btn-motivos-done");
-
-  // Pega um motivo aleatório não repetido
-  const disponiveis = motivos
-    .map((_, i) => i)
-    .filter(i => !STATE.motivosVistos.has(i));
-
-  if (disponiveis.length === 0) {
-    // Reinicia lista
-    STATE.motivosVistos.clear();
-    localStorage.removeItem("motivosVistos");
-  }
-
-  const pool = disponiveis.length > 0 ? disponiveis : motivos.map((_, i) => i);
-  const idx  = pool[Math.floor(Math.random() * pool.length)];
-  STATE.motivosVistos.add(idx);
-  STATE.motivoAtual = idx;
-
-  // Salva progresso
+  const card = $("motivo-card"), numEl = $("motivo-numero"), textoEl = $("motivo-texto"), btnDone = $("btn-motivos-done");
+  const disp = motivos.map((_,i) => i).filter(i => !STATE.motivosVistos.has(i));
+  if (disp.length === 0) { STATE.motivosVistos.clear(); localStorage.removeItem("motivosVistos"); }
+  const pool = disp.length > 0 ? disp : motivos.map((_,i) => i);
+  const idx = pool[Math.floor(Math.random() * pool.length)];
+  STATE.motivosVistos.add(idx); STATE.motivoAtual = idx;
   localStorage.setItem("motivosVistos", JSON.stringify([...STATE.motivosVistos]));
-
-  // Animação
   card.classList.add("fade-out");
   setTimeout(() => {
-    if (numEl)   numEl.textContent   = `#${STATE.motivosVistos.size}`;
+    if (numEl) numEl.textContent = `#${STATE.motivosVistos.size}`;
     if (textoEl) textoEl.textContent = motivos[idx];
-    card.classList.remove("fade-out");
-    card.classList.add("fade-in");
+    card.classList.remove("fade-out"); card.classList.add("fade-in");
     updateMotivosContador();
     setTimeout(() => card.classList.remove("fade-in"), 400);
   }, 380);
-
-  // Habilita botão "já vi o suficiente" após ver 3+
-  if (btnDone && STATE.motivosVistos.size >= 3) {
-    btnDone.style.opacity = "1";
-    btnDone.style.pointerEvents = "all";
-  }
+  if (btnDone && STATE.motivosVistos.size >= 3) { btnDone.style.opacity = "1"; btnDone.style.pointerEvents = "all"; }
 }
 
 function updateMotivosContador() {
-  const el = $("motivo-contador");
-  const total = STATE.motivosVistos.size;
-  if (el) el.textContent = total === 0
-    ? "Pressione para descobrir o primeiro"
-    : `${total} descoberto${total > 1 ? "s" : ""} de ${APP_DATA.motivos.length}`;
+  const el = $("motivo-contador"); const t = STATE.motivosVistos.size;
+  if (el) el.textContent = t === 0 ? "Pressione para descobrir o primeiro" : `${t} descoberto${t > 1 ? "s" : ""} de ${APP_DATA.motivos.length}`;
 }
 
-
-/* ══════════════════════════════════════════════════════
-   CONFETES
-══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   CONFETES & CORAÇÕES
+═══════════════════════════════════════════ */
 function launchConfetti() {
-  const container = $("confetti-container");
-  if (!container) return;
-  const colors = ["#c9a96e", "#e8a0a0", "#f5f0eb", "#e8c99a", "#c06070", "#ffffff"];
-
+  const container = $("confetti-container"); if (!container) return;
+  const colors = ["#c9a96e","#e8a0a0","#f5f0eb","#e8c99a","#c06070","#ffffff"];
   for (let i = 0; i < 80; i++) {
-    const piece = document.createElement("div");
-    piece.className = "confetti-piece";
-
-    const size = Math.random() * 8 + 5;
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    const left  = Math.random() * 100;
-    const delay = Math.random() * 2;
-    const dur   = Math.random() * 2 + 2.5;
-    const rot   = Math.random() * 360;
-
-    piece.style.cssText = `
-      left: ${left}%;
-      width: ${size}px;
-      height: ${size}px;
-      background: ${color};
-      border-radius: ${Math.random() > 0.5 ? "50%" : "2px"};
-      animation-duration: ${dur}s;
-      animation-delay: ${delay}s;
-      transform: rotate(${rot}deg);
-    `;
-    container.appendChild(piece);
+    const p = document.createElement("div"); p.className = "confetti-piece";
+    const size = Math.random()*8+5, color = colors[Math.floor(Math.random()*colors.length)];
+    p.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random()>0.5?"50%":"2px"};animation-duration:${Math.random()*2+2.5}s;animation-delay:${Math.random()*2}s;transform:rotate(${Math.random()*360}deg);`;
+    container.appendChild(p);
   }
-
-  // Limpa após 6s
   setTimeout(() => { container.innerHTML = ""; }, 6000);
 }
 
-
-/* ══════════════════════════════════════════════════════
-   CORAÇÕES FLUTUANTES
-══════════════════════════════════════════════════════ */
 function launchHearts() {
-  const container = $("hearts-container");
-  if (!container) return;
+  const container = $("hearts-container"); if (!container) return;
   container.innerHTML = "";
-
-  const symbols = ["❤", "🩷", "💕", "💗", "💓", "🌹"];
-
+  const symbols = ["❤","🩷","💕","💗","💓","🌹"];
   const launch = () => {
-    const heart = document.createElement("div");
-    heart.className = "floating-heart";
-    heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-    heart.style.cssText = `
-      left: ${Math.random() * 90 + 5}%;
-      font-size: ${Math.random() * 1.2 + 0.8}rem;
-      animation-duration: ${Math.random() * 4 + 5}s;
-      animation-delay: ${Math.random() * 2}s;
-    `;
-    container.appendChild(heart);
-    setTimeout(() => heart.remove(), 9000);
+    const h = document.createElement("div"); h.className = "floating-heart";
+    h.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    h.style.cssText = `left:${Math.random()*90+5}%;font-size:${Math.random()*1.2+0.8}rem;animation-duration:${Math.random()*4+5}s;animation-delay:${Math.random()*2}s;`;
+    container.appendChild(h); setTimeout(() => h.remove(), 9000);
   };
-
-  // Lança corações continuamente
-  for (let i = 0; i < 12; i++) setTimeout(launch, i * 400);
-  const interval = setInterval(launch, 1200);
-  setTimeout(() => clearInterval(interval), 20000);
+  for (let i = 0; i < 12; i++) setTimeout(launch, i*400);
+  const iv = setInterval(launch, 1200); setTimeout(() => clearInterval(iv), 20000);
 }
 
-
-/* ══════════════════════════════════════════════════════
-   PARTÍCULAS DA CAPA
-══════════════════════════════════════════════════════ */
-function createParticles(containerId, count) {
-  const container = $(containerId);
-  if (!container) return;
-
+/* ═══════════════════════════════════════════
+   PARTÍCULAS
+═══════════════════════════════════════════ */
+function createParticles(cid, count) {
+  const container = $(cid); if (!container) return;
   for (let i = 0; i < count; i++) {
-    const p = document.createElement("div");
-    p.className = "particle";
-
-    const size  = Math.random() * 3 + 1;
-    const left  = Math.random() * 100;
-    const delay = Math.random() * 8;
-    const dur   = Math.random() * 8 + 6;
+    const p = document.createElement("div"); p.className = "particle";
     const isHeart = Math.random() > 0.65;
-
-    p.style.cssText = `
-      left: ${left}%;
-      bottom: -10px;
-      width: ${isHeart ? "auto" : size + "px"};
-      height: ${isHeart ? "auto" : size + "px"};
-      background: ${isHeart ? "transparent" : `rgba(201,169,110,${Math.random() * 0.5 + 0.2})`};
-      font-size: ${isHeart ? (Math.random() * 0.6 + 0.5) + "rem" : "0"};
-      color: rgba(232,160,160,0.6);
-      animation-duration: ${dur}s;
-      animation-delay: ${delay}s;
-    `;
+    p.style.cssText = `left:${Math.random()*100}%;bottom:-10px;width:${isHeart?"auto":Math.random()*3+1+"px"};height:${isHeart?"auto":Math.random()*3+1+"px"};background:${isHeart?"transparent":`rgba(201,169,110,${Math.random()*0.5+0.2})`};font-size:${isHeart?Math.random()*0.6+0.5+"rem":"0"};color:rgba(232,160,160,0.6);animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*8}s;`;
     if (isHeart) p.textContent = "❤";
     container.appendChild(p);
   }
 }
 
-
-/* ══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    MÚSICA
-══════════════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
 function setupMusic() {
-  const audio  = $("bg-music");
-  const btn    = $("music-btn");
-  if (!audio || !btn) return;
-
-  if (APP_DATA.musicas.arquivo) {
-    audio.src = APP_DATA.musicas.arquivo;
-    audio.volume = 0.35;
-  }
-
+  const audio = $("bg-music"), btn = $("music-btn"); if (!audio || !btn) return;
+  if (APP_DATA.musicas.arquivo) { audio.src = APP_DATA.musicas.arquivo; audio.volume = 0.35; }
   btn.addEventListener("click", toggleMusic);
 }
-
 function showMusicBtn() {
   const btn = $("music-btn");
-  if (btn && APP_DATA.musicas.arquivo) {
-    btn.classList.add("visible");
-    // Autoplay ao abrir se habilitado
-    if (APP_DATA.musicas.ativada) {
-      setTimeout(() => tryPlayMusic(), 500);
-    }
-  }
+  if (btn && APP_DATA.musicas.arquivo) { btn.classList.add("visible"); if (APP_DATA.musicas.ativada) setTimeout(() => tryPlayMusic(), 500); }
 }
-
 function tryPlayMusic() {
-  const audio = $("bg-music");
-  if (!audio || !APP_DATA.musicas.arquivo) return;
-  audio.play().then(() => {
-    STATE.musicPlaying = true;
-    $("music-btn").classList.add("playing");
-  }).catch(() => {
-    // Autoplay bloqueado pelo browser — usuário precisa interagir primeiro
-  });
+  const audio = $("bg-music"); if (!audio || !APP_DATA.musicas.arquivo) return;
+  audio.play().then(() => { STATE.musicPlaying = true; $("music-btn").classList.add("playing"); }).catch(() => {});
 }
-
 function toggleMusic() {
-  const audio = $("bg-music");
-  const btn   = $("music-btn");
-  if (!audio || !APP_DATA.musicas.arquivo) return;
-
-  if (STATE.musicPlaying) {
-    audio.pause();
-    STATE.musicPlaying = false;
-    btn.classList.remove("playing");
-  } else {
-    audio.play().catch(() => {});
-    STATE.musicPlaying = true;
-    btn.classList.add("playing");
-  }
+  const audio = $("bg-music"), btn = $("music-btn"); if (!audio || !APP_DATA.musicas.arquivo) return;
+  if (STATE.musicPlaying) { audio.pause(); STATE.musicPlaying = false; btn.classList.remove("playing"); }
+  else { audio.play().catch(()=>{}); STATE.musicPlaying = true; btn.classList.add("playing"); }
 }
 
-
-/* ══════════════════════════════════════════════════════
-   NAVEGAÇÃO ENTRE TELAS
-══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   NAVEGAÇÃO
+═══════════════════════════════════════════ */
 function goToScreen(screenId) {
-  const current = document.querySelector(".screen.active");
-  const next    = $(screenId);
+  const current = document.querySelector(".screen.active"), next = $(screenId);
   if (!next || current === next) return;
-
-  // Saída
-  if (current) {
-    current.classList.add("exit");
-    setTimeout(() => {
-      current.classList.remove("active", "exit");
-    }, 650);
-  }
-
-  // Entrada
-  setTimeout(() => {
-    next.classList.add("active");
-    next.scrollTop = 0;
-
-    STATE.currentScreen = screenId;
-    updateProgressBar();
-    saveProgress();
-
-    // Ações especiais ao entrar em certas telas
-    onScreenEnter(screenId);
-  }, current ? 300 : 0);
+  if (current) { current.classList.add("exit"); setTimeout(() => current.classList.remove("active","exit"), 650); }
+  setTimeout(() => { next.classList.add("active"); next.scrollTop = 0; STATE.currentScreen = screenId; updateProgressBar(); saveProgress(); onScreenEnter(screenId); }, current ? 300 : 0);
 }
 
 function onScreenEnter(screenId) {
   switch (screenId) {
-    case "screen-quiz":
-      renderQuizQuestion();
-      setTimeout(() => renderQuizQuestion(), 150);
-      setTimeout(() => renderQuizQuestion(), 500);
-      break;
-
-    case "screen-impact":
-      startImpactAnimation();
-      break;
-
-    case "screen-motivos":
-      // Mostra primeiro motivo
-      if (STATE.motivoAtual === null) {
-        showNextMotivo();
-      }
-      break;
-
-    case "screen-final":
-      setTimeout(launchConfetti, 600);
-      break;
-
-    case "screen-presente":
-      setTimeout(launchHearts, 400);
-      break;
+    case "screen-quiz": renderQuizQuestion(); setTimeout(()=>renderQuizQuestion(),150); setTimeout(()=>renderQuizQuestion(),500); break;
+    case "screen-impact": startImpactAnimation(); break;
+    case "screen-motivos": if (STATE.motivoAtual === null) showNextMotivo(); break;
+    case "screen-final": setTimeout(launchConfetti, 600); break;
+    case "screen-presente": setTimeout(launchHearts, 400); break;
   }
 }
 
-
-/* ══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    BOTÕES
-══════════════════════════════════════════════════════ */
+═══════════════════════════════════════════ */
 function setupButtons() {
-  // Tela 1 → Tela 2
-  const btnStart = $("btn-start");
-  if (btnStart) {
-    btnStart.addEventListener("click", () => {
-      ripple(btnStart);
-      setTimeout(() => goToScreen("screen-intro"), 150);
-    });
-  }
-
-  // Tela 2 → Tela 3 (Quiz)
-  const btnIntroNext = $("btn-intro-next");
-  if (btnIntroNext) {
-    btnIntroNext.addEventListener("click", () => goToScreen("screen-quiz"));
-  }
-
-  // Quiz concluído → Tela 4 (Timeline)
-  const btnQuizDone = $("btn-quiz-done");
-  if (btnQuizDone) {
-    btnQuizDone.addEventListener("click", () => {
-      ripple(btnQuizDone);
-      setTimeout(() => goToScreen("screen-timeline"), 150);
-    });
-  }
-
-  // Timeline → Tela 5 (Impacto)
-  const btnTimelineNext = $("btn-timeline-next");
-  if (btnTimelineNext) {
-    btnTimelineNext.addEventListener("click", () => {
-      ripple(btnTimelineNext);
-      setTimeout(() => goToScreen("screen-impact"), 150);
-    });
-  }
-
-  // Impacto → Tela 6 (Motivos)
-  const btnOpenMotivos = $("btn-open-motivos");
-  if (btnOpenMotivos) {
-    btnOpenMotivos.addEventListener("click", () => {
-      ripple(btnOpenMotivos);
-      setTimeout(() => goToScreen("screen-motivos"), 150);
-    });
-  }
-
-  // Próximo motivo
-  const btnNextMotivo = $("btn-next-motivo");
-  if (btnNextMotivo) {
-    btnNextMotivo.addEventListener("click", () => showNextMotivo());
-  }
-
-  // Ir para final (motivos)
-  const btnMotivosDone = $("btn-motivos-done");
-  if (btnMotivosDone) {
-    btnMotivosDone.style.opacity = "0";
-    btnMotivosDone.style.pointerEvents = "none";
-    btnMotivosDone.addEventListener("click", () => goToScreen("screen-final"));
-  }
-
-  // Revelar surpresa
-  const btnReveal = $("btn-reveal");
-  if (btnReveal) {
-    btnReveal.addEventListener("click", () => {
-      ripple(btnReveal);
-      setTimeout(() => goToScreen("screen-presente"), 150);
-    });
-  }
-
-  // Reiniciar
-  const btnRestart = $("btn-restart");
-  if (btnRestart) {
-    btnRestart.addEventListener("click", () => {
-      if (confirm("Recomeçar a experiência do início?")) {
-        resetApp();
-      }
-    });
-  }
+  const pairs = [
+    ["btn-start",        () => { ripple($("btn-start")); setTimeout(()=>goToScreen("screen-intro"),150); }],
+    ["btn-intro-next",   () => goToScreen("screen-quiz")],
+    ["btn-quiz-done",    () => { ripple($("btn-quiz-done")); setTimeout(()=>goToScreen("screen-timeline"),150); }],
+    ["btn-timeline-next",() => { ripple($("btn-timeline-next")); setTimeout(()=>goToScreen("screen-impact"),150); }],
+    ["btn-open-motivos", () => { ripple($("btn-open-motivos")); setTimeout(()=>goToScreen("screen-motivos"),150); }],
+    ["btn-next-motivo",  () => showNextMotivo()],
+    ["btn-motivos-done", () => goToScreen("screen-final")],
+    ["btn-reveal",       () => { ripple($("btn-reveal")); setTimeout(()=>goToScreen("screen-presente"),150); }],
+    ["btn-restart",      () => { if (confirm("Recomeçar a experiência do início?")) resetApp(); }],
+  ];
+  pairs.forEach(([id, fn]) => { const el = $(id); if (el) el.addEventListener("click", fn); });
+  const btnDone = $("btn-motivos-done");
+  if (btnDone) { btnDone.style.opacity = "0"; btnDone.style.pointerEvents = "none"; }
 }
 
-
-/* ══════════════════════════════════════════════════════
-   RIPPLE (efeito de clique no botão)
-══════════════════════════════════════════════════════ */
 function ripple(btn) {
-  const rippleEl = btn.querySelector(".btn-ripple");
-  if (!rippleEl) return;
-  rippleEl.style.width  = "200px";
-  rippleEl.style.height = "200px";
-  rippleEl.style.opacity = "1";
-  rippleEl.style.transition = "width 0.5s ease, height 0.5s ease, opacity 0.5s ease";
-  setTimeout(() => {
-    rippleEl.style.width   = "0";
-    rippleEl.style.height  = "0";
-    rippleEl.style.opacity = "0";
-  }, 500);
+  const r = btn && btn.querySelector(".btn-ripple"); if (!r) return;
+  r.style.width = r.style.height = "200px"; r.style.opacity = "1"; r.style.transition = "width 0.5s ease, height 0.5s ease, opacity 0.5s ease";
+  setTimeout(() => { r.style.width = r.style.height = "0"; r.style.opacity = "0"; }, 500);
 }
 
-
-/* ══════════════════════════════════════════════════════
-   BARRA DE PROGRESSO GERAL
-══════════════════════════════════════════════════════ */
 function updateProgressBar() {
   const idx = STATE.screenOrder.indexOf(STATE.currentScreen);
   const pct = idx < 0 ? 0 : Math.round((idx / (STATE.screenOrder.length - 1)) * 100);
-  const bar = $("progress-bar");
-  if (bar) bar.style.width = `${pct}%`;
+  const bar = $("progress-bar"); if (bar) bar.style.width = `${pct}%`;
 }
 
-
-/* ══════════════════════════════════════════════════════
-   LOCALSTORE — SALVAR / CARREGAR PROGRESSO
-══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   STORAGE
+═══════════════════════════════════════════ */
 function saveProgress() {
-  try {
-    const data = {
-      currentScreen: STATE.currentScreen,
-      quizIndex:     STATE.quizIndex,
-      quizScore:     STATE.quizScore,
-      motivoAtual:   STATE.motivoAtual
-    };
-    localStorage.setItem("nossoPrimeiroAno_progress", JSON.stringify(data));
-  } catch (_) {}
+  try { localStorage.setItem("nossoPrimeiroAno_progress", JSON.stringify({ currentScreen: STATE.currentScreen, quizIndex: STATE.quizIndex, quizScore: STATE.quizScore, motivoAtual: STATE.motivoAtual })); } catch(_) {}
 }
-
 function loadProgress() {
   try {
-    const raw = localStorage.getItem("nossoPrimeiroAno_progress");
-    if (!raw) return;
+    const raw = localStorage.getItem("nossoPrimeiroAno_progress"); if (!raw) return;
     const data = JSON.parse(raw);
-
-    // Restaurar tela (começa sempre da capa para manter a emoção)
-    // Descomente abaixo para restaurar posição:
-    // if (data.currentScreen) STATE.currentScreen = data.currentScreen;
-
-    // ✅ FIX: reseta quiz se estava concluído (evita card vazio)
-    if (typeof data.quizIndex === "number") {
-      STATE.quizIndex = data.quizIndex >= APP_DATA.quiz.length ? 0 : data.quizIndex;
-    }
-    if (typeof data.quizScore === "number")   STATE.quizScore   = data.quizScore;
+    if (typeof data.quizIndex === "number") STATE.quizIndex = data.quizIndex >= APP_DATA.quiz.length ? 0 : data.quizIndex;
+    if (typeof data.quizScore === "number") STATE.quizScore = data.quizScore;
     if (typeof data.motivoAtual === "number") STATE.motivoAtual = data.motivoAtual;
-  } catch (_) {}
+  } catch(_) {}
 }
-
 function resetApp() {
-  localStorage.removeItem("nossoPrimeiroAno_progress");
-  localStorage.removeItem("motivosVistos");
-
-  // Reset state
-  STATE.quizIndex    = 0;
-  STATE.quizScore    = 0;
-  STATE.motivosVistos.clear();
-  STATE.motivoAtual  = null;
-
-  // Reset quiz UI
-  const quizEnd     = $("quiz-end");
-  const quizCard    = $("quiz-card");
-  const quizPfWrap  = $("quiz-progress-wrap");
-  const block2      = $("impact-block-2");
-  const btnMotivos  = $("btn-open-motivos");
-  const btnDone     = $("btn-motivos-done");
-
-  if (quizEnd)    quizEnd.classList.add("hidden");
-  if (quizCard)   { quizCard.classList.remove("hidden", "flip-out"); }
-  if (quizPfWrap) quizPfWrap.classList.remove("hidden");
-  if (block2)     block2.classList.add("hidden");
-  if (btnMotivos) btnMotivos.classList.add("hidden");
-  if (btnDone)    { btnDone.style.opacity = "0"; btnDone.style.pointerEvents = "none"; }
-
-  renderQuizQuestion();
-  updateMotivosContador();
-
-  // Volta para capa
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active", "exit"));
-  const cover = $("screen-cover");
-  if (cover) cover.classList.add("active");
-
-  STATE.currentScreen = "screen-cover";
-  updateProgressBar();
+  localStorage.removeItem("nossoPrimeiroAno_progress"); localStorage.removeItem("motivosVistos");
+  STATE.quizIndex = 0; STATE.quizScore = 0; STATE.motivosVistos.clear(); STATE.motivoAtual = null;
+  ["quiz-end","impact-block-2","btn-open-motivos"].forEach(id => { const el = $(id); if (el) el.classList.add("hidden"); });
+  const bd = $("btn-motivos-done"); if (bd) { bd.style.opacity = "0"; bd.style.pointerEvents = "none"; }
+  renderQuizQuestion(); updateMotivosContador();
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active","exit"));
+  const cover = $("screen-cover"); if (cover) cover.classList.add("active");
+  STATE.currentScreen = "screen-cover"; updateProgressBar();
 }
 
-
-/* ══════════════════════════════════════════════════════
-   INTRO TEXT — animação de texto letra a letra
-══════════════════════════════════════════════════════ */
-function typewriterEffect(el, text, speed = 35) {
-  if (!el) return;
-  el.textContent = "";
-  let i = 0;
-  const timer = setInterval(() => {
-    el.textContent += text[i];
-    i++;
-    if (i >= text.length) clearInterval(timer);
-  }, speed);
-}
-
-// Ativa typewriter quando intro aparecer
+/* ═══════════════════════════════════════════
+   TYPEWRITER & SWIPE
+═══════════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", () => {
-  const introScreen = $("screen-intro");
-  if (!introScreen) return;
-
-  const observer = new MutationObserver((mutations) => {
+  const introScreen = $("screen-intro"); if (!introScreen) return;
+  const obs = new MutationObserver(mutations => {
     mutations.forEach(m => {
       if (m.target.classList.contains("active") && !introScreen.dataset.typed) {
         introScreen.dataset.typed = "1";
-        const introEl = $("intro-text");
-        if (introEl) {
-          typewriterEffect(introEl, APP_DATA.textos.mensagemInicial, 40);
-        }
+        const el = $("intro-text");
+        if (el) { el.textContent = ""; let i = 0; const t = APP_DATA.textos.mensagemInicial; const timer = setInterval(() => { el.textContent += t[i]; i++; if (i >= t.length) clearInterval(timer); }, 40); }
       }
     });
   });
-  observer.observe(introScreen, { attributes: true, attributeFilter: ["class"] });
+  obs.observe(introScreen, { attributes: true, attributeFilter: ["class"] });
 });
 
-
-/* ══════════════════════════════════════════════════════
-   SWIPE (navegação por arraste nas telas simples)
-══════════════════════════════════════════════════════ */
 (function setupSwipe() {
-  let touchStartY = 0;
-  let touchStartX = 0;
-
-  document.addEventListener("touchstart", e => {
-    touchStartY = e.touches[0].clientY;
-    touchStartX = e.touches[0].clientX;
-  }, { passive: true });
-
+  let ty = 0, tx = 0;
+  document.addEventListener("touchstart", e => { ty = e.touches[0].clientY; tx = e.touches[0].clientX; }, { passive: true });
   document.addEventListener("touchend", e => {
-    const dy = touchStartY - e.changedTouches[0].clientY;
-    const dx = touchStartX - e.changedTouches[0].clientX;
-
-    // Só reage a swipe vertical significativo (> 60px) em telas simples
+    const dy = ty - e.changedTouches[0].clientY, dx = tx - e.changedTouches[0].clientX;
     if (Math.abs(dy) < 60 || Math.abs(dx) > Math.abs(dy)) return;
-
-    // Telas onde swipe up avança
-    const swipeScreens = {
-      "screen-intro":    "screen-quiz",
-      "screen-final":    "screen-presente"
-    };
-
-    if (dy > 0 && swipeScreens[STATE.currentScreen]) {
-      goToScreen(swipeScreens[STATE.currentScreen]);
-    }
+    const map = { "screen-intro": "screen-quiz", "screen-final": "screen-presente" };
+    if (dy > 0 && map[STATE.currentScreen]) goToScreen(map[STATE.currentScreen]);
   }, { passive: true });
 })();
 
-
-/* ══════════════════════════════════════════════════════
-   PRELOAD DE IMAGENS
-══════════════════════════════════════════════════════ */
 (function preloadImages() {
-  const imgs = [
-    APP_DATA.fotosGerais.capa,
-    ...APP_DATA.timeline.map(t => t.foto)
-  ].filter(Boolean);
-
-  imgs.forEach(src => {
-    const img = new Image();
-    img.src = src;
-  });
+  const imgs = [APP_DATA.fotosGerais.capa, ...APP_DATA.timeline.map(t => t.foto)].filter(Boolean);
+  imgs.forEach(src => { const img = new Image(); img.src = src; });
 })();
-
-/* ── FIM DO SCRIPT ── */
