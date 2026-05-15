@@ -1,78 +1,38 @@
 # Nosso Primeiro Ano ❤️
 
-## Estrutura do Projeto
-
+## Estrutura
 ```
 nosso-primeiro-ano/
-├── index.html            ← Site da retrospectiva (experiência final)
-├── style.css             ← Estilos do site
-├── script.js             ← JavaScript do site
-├── manifest.json         ← Configuração PWA
-├── sw.js                 ← Service Worker (offline)
+├── index.html          ← Site da retrospectiva
+├── style.css           ← Estilos
+├── script.js           ← JavaScript + APP_DATA
+├── manifest.json       ← PWA
+├── sw.js               ← Service Worker
+├── vercel.json         ← Config Vercel
 ├── admin/
-│   └── index.html        ← Painel Administrativo (abrir no navegador)
-├── fotos/                ← Coloque suas fotos aqui
-│   └── README.txt
-├── icons/                ← Ícones do PWA
-│   └── README.txt
-└── .well-known/
-    └── assetlinks.json   ← Config Android TWA
+│   └── index.html      ← Painel Admin (Preact + htm, sem Babel)
+├── fotos/
+└── icons/
 ```
 
-## ⚡ Início Rápido
+## Como usar
 
-### 1. Abrir o Admin
-Abra `admin/index.html` no seu navegador.
-O admin funciona localmente — sem servidor necessário.
+### 1. Admin Panel
+Abra `admin/index.html` no navegador — funciona local **e** no Vercel.
 
-### 2. Criar sua Retrospectiva
-- Clique em **Nova Retrospectiva**
-- Preencha todos os dados nas abas
-- Clique em **Publicar**
-- Clique em **Exportar APP_DATA** para gerar o código
+> ✅ Reescrito com **Preact + htm** (sem Babel, sem eval)
+> Compatível com Vercel, Netlify, GitHub Pages e qualquer CDN.
 
-### 3. Aplicar ao Site
-- Cole o APP_DATA exportado no `script.js`
-- Adicione suas fotos na pasta `fotos/`
-- Abra `index.html` no navegador
+### 2. Editar Dados
+- No Admin → aba **Publicar** → **Copiar Código**
+- Cole no `script.js` substituindo `APP_DATA`
 
-## 🌐 Deploy (Netlify)
+### 3. Deploy Vercel
+1. Faça upload da pasta no https://vercel.com
+2. Admin estará em `/admin/index.html`
 
-1. Acesse https://netlify.com
-2. Arraste a pasta inteira para o Netlify Drop
-3. Seu site estará online em segundos!
-
-## 🛠️ Servidor Local
-
+## Servidor Local
 ```bash
-# Python (recomendado)
 python -m http.server 8080
-# Abra: http://localhost:8080
-
-# Node.js
-npx serve .
+# Acesse: http://localhost:8080/admin/index.html
 ```
-
-## 📁 Fotos
-
-Coloque suas fotos na pasta `fotos/` e referencie no script:
-```js
-foto: "fotos/nome-da-foto.jpg"
-```
-
-Formatos suportados: JPG, PNG, WEBP, GIF
-
-## 🎵 Música
-
-- **Link externo**: Cole uma URL do Spotify, YouTube ou MP3 direto
-- **Arquivo local**: Coloque o MP3 na raiz e use `musica.mp3`
-
-## 📱 PWA (Instalar no Celular)
-
-O site já é um PWA. No celular:
-1. Abra no Chrome
-2. Toque nos 3 pontos → "Adicionar à tela inicial"
-3. O app aparecerá como ícone na home
-
----
-Feito com ❤️

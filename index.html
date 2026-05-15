@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0a0a0f" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta name="theme-color" content="#0a0a0f"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <title>Nosso Primeiro Ano ❤️</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icons/icon-192.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <div id="loader" class="loader">
@@ -24,9 +24,7 @@
     <p class="loader-text">carregando nossa história...</p>
   </div>
 
-  <button id="music-btn" class="music-btn" title="Música" aria-label="Música">
-    <span class="music-icon">♪</span>
-  </button>
+  <button id="music-btn" class="music-btn" title="Música"><span class="music-icon">♪</span></button>
   <audio id="bg-music" loop></audio>
   <div id="progress-bar-wrap" class="progress-bar-wrap"><div id="progress-bar" class="progress-bar"></div></div>
 
@@ -79,9 +77,9 @@
     <div class="screen-bg-impact"></div>
     <div class="screen-content centered">
       <div class="impact-block" id="impact-block-1">
-        <p class="impact-text-before" id="impact-before-1">Há um ano eu te dei</p>
+        <p class="impact-text-before">Há um ano eu te dei</p>
         <p class="impact-number" id="impact-number-1">100</p>
-        <p class="impact-text-after" id="impact-after-1">motivos por que eu te amo.</p>
+        <p class="impact-text-after">motivos por que eu te amo.</p>
       </div>
       <div class="impact-divider" id="impact-divider"></div>
       <div class="impact-block hidden" id="impact-block-2">
@@ -136,22 +134,12 @@
   </section>
 
   <script>
-    (function() {
-      function requestFS() {
-        var el = document.documentElement;
-        var fn = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
-        if (fn) fn.call(el).catch(function(){});
-      }
-      document.addEventListener('touchstart', function h() {
-        requestFS(); document.removeEventListener('touchstart', h);
-      }, { once: true, passive: true });
+    (function(){
+      function reqFS(){var e=document.documentElement,f=e.requestFullscreen||e.webkitRequestFullscreen||e.mozRequestFullScreen;if(f)f.call(e).catch(function(){});}
+      document.addEventListener('touchstart',function h(){reqFS();document.removeEventListener('touchstart',h);},{once:true,passive:true});
     })();
   </script>
   <script src="script.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); });
-    }
-  </script>
+  <script>if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{});});}</script>
 </body>
 </html>
