@@ -1,5 +1,5 @@
-const CACHE_NAME = "nosso-primeiro-ano-v1";
-const ASSETS = ["/","/index.html","/style.css","/script.js","/manifest.json"];
+const CACHE_NAME = "nosso-primeiro-ano-v2";
+const ASSETS = ["/", "/index.html", "/retro.html", "/style.css", "/script.js", "/manifest.json"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
@@ -14,7 +14,7 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   e.respondWith(
     caches.match(e.request).then(cached =>
-      cached || fetch(e.request).catch(() => caches.match("/index.html"))
+      cached || fetch(e.request).catch(() => caches.match("/retro.html"))
     )
   );
 });
