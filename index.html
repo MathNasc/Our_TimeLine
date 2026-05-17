@@ -100,6 +100,7 @@ const TABS = [
   {id:'gallery',  label:'Galeria',  icon:'Img'},
   {id:'quiz',     label:'Quiz',     icon:'Help'},
   {id:'music',    label:'Música',   icon:'Music'},
+  {id:'cartas',   label:'Cartas',   icon:'Book'},
   {id:'design',   label:'Design',   icon:'Palette'},
   {id:'sections', label:'Seções',   icon:'Layers'},
   {id:'publish',  label:'Publicar', icon:'Globe'},
@@ -111,6 +112,7 @@ const makeRetro = (o={}) => ({
   content:{title:'Nosso Primeiro Ano ❤️',subtitle:'Uma pequena experiência para a pessoa mais importante da minha vida.',intro:'',finalMessage:'',surpriseText:''},
   timeline:[], gallery:[], quiz:[],
   music:{type:'url',url:'',autoplay:false},
+  cartas:[],
   theme:{primaryColor:'#c9a96e',secondaryColor:'#e8a0a0',bgColor:'#0a0a0f',style:'elegant',font:'cormorant',mode:'dark'},
   sections:{counter:true,timeline:true,gallery:true,quiz:true,music:true,loveLetter:false,map:false,video:false},
   ...o
@@ -374,6 +376,7 @@ function Editor({retro,tab,onTabChange,onUpdate,onSave,onBack,onPreview}) {
         ${tab==='gallery'  &&html`<${GalleryTab}  retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='quiz'     &&html`<${QuizTab}     retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='music'    &&html`<${MusicTab}    retro=${retro} onUpdate=${onUpdate}/>`}
+        {tab==='cartas'   &&html`<${CartasTab}   retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='design'   &&html`<${DesignTab}   retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='sections' &&html`<${SectionsTab} retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='publish'  &&html`<${PublishTab}  retro=${retro} onUpdate=${onUpdate} onSave=${save}/>`}
@@ -671,6 +674,55 @@ function DesignTab({retro,onUpdate}) {
 }
 
 // ── SECTIONS TAB ─────────────────────────────────────────
+
+// ── CARTAS TAB ─────────────────────────────────────────
+const makeCarta = () => ({id:uid(), texto:''});
+
+function CartasTab({retro,onUpdate}) {
+  const [exp,setExp]=useState(null);
+  const cartas=retro.cartas||[];
+  const add=()=>{ const c=makeCarta(); onUpdate('cartas',[...cartas,c]); setExp(c.id); };
+  const rm=id=>{ onUpdate('cartas',cartas.filter(c=>c.id!==id)); if(exp===id)setExp(null); };
+  const upd=(id,texto)=>onUpdate('cartas',cartas.map(c=>c.id===id?{...c,texto}:c));
+  return html`<div>
+    <div style=${{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:32}}>
+      <${TabH} title="Cartas de Amor" sub="${cartas.length} carta${cartas.length!==1?'s':''} · Reveladas uma por uma"/>
+      <button onClick=${add} style=${{display:'flex',alignItems:'center',gap:7,padding:'9px 18px',background:'rgba(201,169,110,0.1)',border:'1px solid rgba(201,169,110,0.25)',borderRadius:12,color:'#c9a96e',fontSize:13,cursor:'pointer',fontFamily:'inherit',flexShrink:0}}>
+        <${IC.Plus} s=${14}/> Adicionar Carta
+      </button>
+    </div>
+    ${cartas.length===0
+      ? html`<div style=${{textAlign:'center',padding:'56px 0',borderRadius:20,border:'2px dashed rgba(255,255,255,0.07)'}}>
+          <div style=${{fontSize:40,marginBottom:12}}>💌</div>
+          <div style=${{fontSize:13,color:'rgba(255,255,255,0.3)',marginBottom:6}}>Nenhuma carta ainda</div>
+          <div style=${{fontSize:12,color:'rgba(255,255,255,0.18)'}}>Cada carta é revelada uma por uma na experiência</div>
+        </div>`
+      : html`<div style=${{display:'flex',flexDirection:'column',gap:8}}>
+          ${cartas.map((c,i)=>html`<div key=${c.id} style=${{borderRadius:16,border:'1px solid rgba(255,255,255,0.08)',overflow:'hidden',background:'rgba(255,255,255,0.02)'}}>
+            <div onClick=${()=>setExp(exp===c.id?null:c.id)} style=${{display:'flex',alignItems:'center',gap:10,padding:'12px 14px',cursor:'pointer'}}>
+              <span style=${{fontFamily:'monospace',fontSize:11,color:'rgba(201,169,110,0.5)',flexShrink:0}}>💌 #${i+1}</span>
+              <div style=${{flex:1,fontSize:13,color:c.texto?'#fff':'rgba(255,255,255,0.3)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                ${c.texto?c.texto.slice(0,55)+(c.texto.length>55?'...':''):'Carta vazia — clique para escrever'}
+              </div>
+              <button onClick=${e=>{e.stopPropagation();rm(c.id);}} style=${{padding:6,borderRadius:8,background:'none',border:'none',color:'rgba(255,255,255,0.15)',cursor:'pointer'}}
+                onMouseEnter=${e=>{e.currentTarget.style.background='rgba(239,68,68,0.12)';e.currentTarget.style.color='#f87171';}}
+                onMouseLeave=${e=>{e.currentTarget.style.background='none';e.currentTarget.style.color='rgba(255,255,255,0.15)';}}
+              ><${IC.X} s=${13}/></button>
+              <div style=${{color:'rgba(255,255,255,0.2)',transform:exp===c.id?'rotate(180deg)':'none',transition:'transform 0.2s',display:'flex'}}><${IC.Chev} s=${13}/></div>
+            </div>
+            ${exp===c.id&&html`<div style=${{padding:'16px 14px 14px',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
+              <${Inp} label="Texto da Carta" value=${c.texto} onChange=${v=>upd(c.id,v)}
+                placeholder="Escreva aqui sua carta de amor... ❤️" rows=${6}/>
+              <div style=${{fontSize:11,color:'rgba(255,255,255,0.2)',marginTop:8,textAlign:'right'}}>
+                ${c.texto?c.texto.length+' caracteres':''}
+              </div>
+            </div>`}
+          </div>`)}
+        </div>`}
+  </div>`;
+}
+
+
 function SectionsTab({retro,onUpdate}) {
   const active=Object.values(retro.sections||{}).filter(Boolean).length;
   return html`<div>
@@ -708,10 +760,10 @@ function PublishTab({retro,onUpdate,onSave}) {
     return {
       casal:{meuNome:r.couple.name1||'',nomeDela:r.couple.name2||'',apelido:r.couple.nickname||''},
       datas:{matchDate:fmt(r.couple.matchDate),primeiroEncontro:'',primeiroBeijo:'',primeiraViajem:'',pedidoNamoro:fmt(r.couple.startDate),nossoAp:'',aniversario1Ano:fmt(r.couple.startDate)},
-      textos:{subtitulo:r.content.subtitle||'',mensagemInicial:r.content.intro||'',introducao:r.content.intro||'',mensagemFinal:r.content.finalMessage||'',localPresenteFinal:r.content.surpriseText||''},
+      textos:{titulo:r.content.title||'Nosso Primeiro Ano ❤️',subtitulo:r.content.subtitle||'',mensagemInicial:r.content.intro||'',introducao:r.content.intro||'',mensagemFinal:r.content.finalMessage||'',localPresenteFinal:r.content.surpriseText||''},
       quiz:r.quiz.map(q=>({pergunta:q.question,opcoes:q.options,correta:q.correct,acerto:q.hitMessage,erro:q.missMessage})),
       timeline:r.timeline.map(e=>({titulo:e.title,data:e.date,descricao:e.description,foto:e.photo||''})),
-      motivos:[],
+      motivos:(r.cartas||[]).map(c=>typeof c==='string'?c:c.texto||'').filter(Boolean),
       musicas:{ativada:r.music.autoplay,arquivo:r.music.url||''},
       fotosGerais:{capa:'',fundo:''}
     };

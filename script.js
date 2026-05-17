@@ -6,7 +6,7 @@
 const APP_DATA = window.__RETRO_DATA__ || {
   casal:  { meuNome:"Matheus", nomeDela:"Marcela", apelido:"Moi ❤️" },
   datas:  { matchDate:"27 de fevereiro de 2025", primeiroEncontro:"22 de março de 2025", primeiroBeijo:"22 de março de 2025", primeiraViajem:"01 de maio de 2025", pedidoNamoro:"01 de maio de 2025", nossoAp:"11 de março de 2026", aniversario1Ano:"01 de maio de 2026" },
-  textos: { subtitulo:"Uma pequena experiência para a pessoa mais importante da minha vida.", mensagemInicial:"Há um ano eu fiz uma das melhores escolhas da minha vida...", introducao:"Eu escolhi você. E cada dia desde então me prova que foi a escolha mais certa que já fiz.", mensagemFinal:"Feliz 1 ano, meu amor. Que venham muitos outros, sempre ao seu lado.", localPresenteFinal:"SOU EU!!! 🌹" },
+  textos: { titulo:"Nosso Primeiro Ano ❤️", subtitulo:"Uma pequena experiência para a pessoa mais importante da minha vida.", mensagemInicial:"Há um ano eu fiz uma das melhores escolhas da minha vida...", introducao:"Eu escolhi você. E cada dia desde então me prova que foi a escolha mais certa que já fiz.", mensagemFinal:"Feliz 1 ano, meu amor. Que venham muitos outros, sempre ao seu lado.", localPresenteFinal:"SOU EU!!! 🌹" },
   quiz: [
     { pergunta:"Onde foi nosso primeiro encontro?", opcoes:["Magia & Bruxaria","Vassoura Quebrada","Beco Hexagonal","Casa dos Bruxos"], correta:1, acerto:"Acertou minha bruxinha! 🥰", erro:"Quase! Mas foi no Vassoura Quebrada 🪄" },
     { pergunta:"Qual foi nossa primeira viagem juntos?", opcoes:["Campos do Jordão","Ubatuba","Santos","Paraty"], correta:3, acerto:"Sim! e ainda teve pedido de namoro. 💍", erro:"Nãão! Foi quando começamos a namorar 💍" },
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   updateProgressBar();
 });
 
-function populateCover(){ const t=$("cover-title");if(t)t.textContent="Nosso Primeiro Ano ❤️"; const s=$("cover-subtitle");if(s)s.textContent=APP_DATA.textos.subtitulo; const d=$("cover-date");if(d)d.textContent=APP_DATA.datas.aniversario1Ano; const bg=$("cover-bg");if(bg&&APP_DATA.fotosGerais.capa){bg.style.backgroundImage=`url('${APP_DATA.fotosGerais.capa}')`;bg.style.display="block";} }
+function populateCover(){ const t=$("cover-title");if(t)t.textContent=APP_DATA.textos.titulo||"Nosso Primeiro Ano ❤️"; const s=$("cover-subtitle");if(s)s.textContent=APP_DATA.textos.subtitulo; const d=$("cover-date");if(d)d.textContent=APP_DATA.datas.aniversario1Ano; const bg=$("cover-bg");if(bg&&APP_DATA.fotosGerais.capa){bg.style.backgroundImage=`url('${APP_DATA.fotosGerais.capa}')`;bg.style.display="block";} }
 function populateIntro(){ const it=$("intro-text");if(it)it.textContent=APP_DATA.textos.mensagemInicial; const in_=$("intro-names");if(in_)in_.textContent=`${APP_DATA.casal.meuNome} & ${APP_DATA.casal.nomeDela}`; }
 function populateTimeline(){
   const list=$("timeline-list");if(!list)return; list.innerHTML="";
@@ -107,6 +107,9 @@ function startImpactAnimation(){
   setTimeout(()=>{if(btn){btn.classList.remove("hidden");btn.style.animation="fade-up 0.7s cubic-bezier(0,0,0.2,1) forwards";}},4500);
 }
 function showNextMotivo(){
+  const motivos=APP_DATA.motivos;
+  if(!motivos||motivos.length===0){const bd=$("btn-motivos-done");if(bd){bd.style.opacity="1";bd.style.pointerEvents="all";}return;}
+
   const motivos=APP_DATA.motivos,card=$("motivo-card"),numEl=$("motivo-numero"),textoEl=$("motivo-texto"),btnDone=$("btn-motivos-done");
   const disp=motivos.map((_,i)=>i).filter(i=>!STATE.motivosVistos.has(i));
   if(disp.length===0){STATE.motivosVistos.clear();localStorage.removeItem("motivosVistos");}
@@ -114,9 +117,9 @@ function showNextMotivo(){
   STATE.motivosVistos.add(idx);STATE.motivoAtual=idx;localStorage.setItem("motivosVistos",JSON.stringify([...STATE.motivosVistos]));
   card.classList.add("fade-out");
   setTimeout(()=>{ if(numEl)numEl.textContent=`#${STATE.motivosVistos.size}`; if(textoEl)textoEl.textContent=motivos[idx]; card.classList.remove("fade-out");card.classList.add("fade-in"); updateMotivosContador(); setTimeout(()=>card.classList.remove("fade-in"),400); },380);
-  if(btnDone&&STATE.motivosVistos.size>=3){btnDone.style.opacity="1";btnDone.style.pointerEvents="all";}
+  if(btnDone){const thr=Math.min(3,Math.max(1,motivos.length));if(STATE.motivosVistos.size>=thr){btnDone.style.opacity="1";btnDone.style.pointerEvents="all";}}
 }
-function updateMotivosContador(){ const el=$("motivo-contador"),t=STATE.motivosVistos.size; if(el)el.textContent=t===0?"Pressione para descobrir o primeiro":`${t} descoberto${t>1?"s":""} de ${APP_DATA.motivos.length}`; }
+function updateMotivosContador(){ const el=$("motivo-contador"),t=STATE.motivosVistos.size; if(el)el.textContent=t===0?"Pressione para abrir a primeira":`${t} aberta${t>1?"s":""} de ${APP_DATA.motivos.length}`; }
 function launchConfetti(){ const container=$("confetti-container");if(!container)return; const colors=["#c9a96e","#e8a0a0","#f5f0eb","#e8c99a","#c06070","#ffffff"]; for(let i=0;i<80;i++){const p=document.createElement("div");p.className="confetti-piece";const size=Math.random()*8+5,color=colors[Math.floor(Math.random()*colors.length)];p.style.cssText=`left:${Math.random()*100}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random()>0.5?"50%":"2px"};animation-duration:${Math.random()*2+2.5}s;animation-delay:${Math.random()*2}s;transform:rotate(${Math.random()*360}deg);`;container.appendChild(p);}setTimeout(()=>{container.innerHTML="";},6000); }
 function launchHearts(){ const container=$("hearts-container");if(!container)return;container.innerHTML=""; const symbols=["❤","🩷","💕","💗","💓","🌹"],launch=()=>{const h=document.createElement("div");h.className="floating-heart";h.textContent=symbols[Math.floor(Math.random()*symbols.length)];h.style.cssText=`left:${Math.random()*90+5}%;font-size:${Math.random()*1.2+0.8}rem;animation-duration:${Math.random()*4+5}s;animation-delay:${Math.random()*2}s;`;container.appendChild(h);setTimeout(()=>h.remove(),9000);}; for(let i=0;i<12;i++)setTimeout(launch,i*400); const iv=setInterval(launch,1200);setTimeout(()=>clearInterval(iv),20000); }
 function createParticles(cid,count){ const container=$(cid);if(!container)return; for(let i=0;i<count;i++){const p=document.createElement("div");p.className="particle";const isHeart=Math.random()>0.65;p.style.cssText=`left:${Math.random()*100}%;bottom:-10px;width:${isHeart?"auto":Math.random()*3+1+"px"};height:${isHeart?"auto":Math.random()*3+1+"px"};background:${isHeart?"transparent":`rgba(201,169,110,${Math.random()*0.5+0.2})`};font-size:${isHeart?Math.random()*0.6+0.5+"rem":"0"};color:rgba(232,160,160,0.6);animation-duration:${Math.random()*8+6}s;animation-delay:${Math.random()*8}s;`;if(isHeart)p.textContent="❤";container.appendChild(p);} }
