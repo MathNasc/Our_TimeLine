@@ -696,69 +696,122 @@ function SectionsTab({retro,onUpdate}) {
 // ── PUBLISH TAB ──────────────────────────────────────────
 function PublishTab({retro,onUpdate,onSave}) {
   const [copied,setCopied]=useState(false);
-  const [showCode,setShowCode]=useState(false);
-  const url='https://our-timeline-sigma.vercel.app';
+  const [exporting,setExporting]=useState(false);
+  const SITE='https://our-timeline-sigma.vercel.app';
+  const slug=retro.slug||slugify(`${retro.couple.name1} e ${retro.couple.name2}`)||'minha-retrospectiva';
+  const url=`${SITE}/${slug}`;
   const copy=()=>{ navigator.clipboard?.writeText(url); setCopied(true); setTimeout(()=>setCopied(false),2000); };
-  const exportJSON=()=>{ const b=new Blob([JSON.stringify(retro,null,2)],{type:'application/json'}); const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:`${slug}.json`}); a.click(); };
   const active=Object.values(retro.sections||{}).filter(Boolean).length;
 
-  const generateAppData=()=>{
-    const d=retro;
-    const fmt=iso=>{ if(!iso)return''; try{return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});}catch{return iso;} };
-    const qs=d.quiz.map(q=>`    {\n      pergunta: ${JSON.stringify(q.question)},\n      opcoes: ${JSON.stringify(q.options)},\n      correta: ${q.correct},\n      acerto: ${JSON.stringify(q.hitMessage)},\n      erro: ${JSON.stringify(q.missMessage)}\n    }`).join(',\n');
-    const tl=d.timeline.map(e=>`    {\n      titulo: ${JSON.stringify(e.title)},\n      data: ${JSON.stringify(e.date)},\n      descricao: ${JSON.stringify(e.description)},\n      foto: ${JSON.stringify(e.photo||'')}\n    }`).join(',\n');
-    return `const APP_DATA = {
-  casal: { meuNome: ${JSON.stringify(d.couple.name1||'')}, nomeDela: ${JSON.stringify(d.couple.name2||'')}, apelido: ${JSON.stringify(d.couple.nickname||'')} },
-  datas: { matchDate: "${fmt(d.couple.matchDate)}", pedidoNamoro: "${fmt(d.couple.startDate)}", aniversario1Ano: "${fmt(d.couple.startDate)}" },
-  textos: { subtitulo: ${JSON.stringify(d.content.subtitle)}, mensagemInicial: ${JSON.stringify(d.content.intro||'')}, mensagemFinal: ${JSON.stringify(d.content.finalMessage||'')}, localPresenteFinal: ${JSON.stringify(d.content.surpriseText||'')} },
-  quiz: [\n${qs}\n  ],
-  timeline: [\n${tl}\n  ],
-  motivos: [],
-  musicas: { ativada: ${d.music.autoplay}, arquivo: ${JSON.stringify(d.music.url||'')} },
-  fotosGerais: { capa: '', fundo: '' }
-};`;
+  const toAppData=r=>{
+    const fmt=iso=>{if(!iso)return'';try{return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});}catch{return iso;}};
+    return {
+      casal:{meuNome:r.couple.name1||'',nomeDela:r.couple.name2||'',apelido:r.couple.nickname||''},
+      datas:{matchDate:fmt(r.couple.matchDate),primeiroEncontro:'',primeiroBeijo:'',primeiraViajem:'',pedidoNamoro:fmt(r.couple.startDate),nossoAp:'',aniversario1Ano:fmt(r.couple.startDate)},
+      textos:{subtitulo:r.content.subtitle||'',mensagemInicial:r.content.intro||'',introducao:r.content.intro||'',mensagemFinal:r.content.finalMessage||'',localPresenteFinal:r.content.surpriseText||''},
+      quiz:r.quiz.map(q=>({pergunta:q.question,opcoes:q.options,correta:q.correct,acerto:q.hitMessage,erro:q.missMessage})),
+      timeline:r.timeline.map(e=>({titulo:e.title,data:e.date,descricao:e.description,foto:e.photo||''})),
+      motivos:[],
+      musicas:{ativada:r.music.autoplay,arquivo:r.music.url||''},
+      fotosGerais:{capa:'',fundo:''}
+    };
   };
 
-  const copyCode=()=>{ navigator.clipboard?.writeText(generateAppData()); };
+  const exportHTML=async()=>{
+    setExporting(true);
+    try {
+      const resp=await fetch('/retro.html');
+      if(!resp.ok) throw new Error('retro.html não encontrado');
+      let html=await resp.text();
+      const couple=[retro.couple.name1,retro.couple.name2].filter(Boolean).join(' & ')||'Nossa Retrospectiva';
+      html=html.replace('<title>Nosso Primeiro Ano \u2764\ufe0f</title>',`<title>${couple} \u2764\ufe0f</title>`);
+      html=html.replace('href="manifest.json"','href="/manifest.json"');
+      html=html.replace('href="icons/icon-192.png"','href="/icons/icon-192.png"');
+      html=html.replace('href="style.css"','href="/style.css"');
+      const data=JSON.stringify(toAppData(retro));
+      const inject=`<script>\nwindow.__RETRO_DATA__=${data};\n<\/script>\n  `;
+      html=html.replace('<script src="script.js">',inject+'<script src="/script.js">');
+      const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+      const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:`${slug}.html`});
+      a.click();
+    } catch(e) {
+      alert('Erro ao exportar: '+e.message+'\n\nAbra o admin pelo Vercel (não como arquivo local).');
+    }
+    setExporting(false);
+  };
+
+  const exportJSON=()=>{const b=new Blob([JSON.stringify(retro,null,2)],{type:'application/json'});const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:`${slug}.json`});a.click();};
 
   return html`<div>
-    <${TabH} title="Publicação" sub="Configure e compartilhe sua retrospectiva"/>
-    <${Sec} title="Status">
-      <div style=${{padding:16,borderRadius:14,border:'1px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
-        <div><div style=${{fontSize:12,color:'rgba(255,255,255,0.3)',marginBottom:6}}>Status atual</div><${Badge} status=${retro.status}/></div>
-        <div style=${{display:'flex',gap:8}}>
-          <button onClick=${()=>onSave('draft')} style=${{display:'flex',alignItems:'center',gap:6,padding:'9px 16px',background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.09)',borderRadius:11,color:'rgba(255,255,255,0.55)',fontSize:12,cursor:'pointer',fontFamily:'inherit'}}><${IC.Save} s=${12}/> Rascunho</button>
-          <button onClick=${()=>onSave('published')} style=${{display:'flex',alignItems:'center',gap:6,padding:'9px 18px',background:'#c9a96e',border:'none',borderRadius:11,color:'#000',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}><${IC.Globe} s=${12}/> Publicar</button>
-        </div>
+    <${TabH} title="Publicação" sub="Gere um HTML por retrospectiva com sua própria URL"/>
+
+    <${Sec} title="Slug da URL">
+      <div style=${{fontSize:12,color:'rgba(255,255,255,0.4)',marginBottom:8,lineHeight:1.6}}>
+        Cada retrospectiva tem um caminho único. O arquivo gerado será servido automaticamente pelo Vercel na URL abaixo.
       </div>
-    </${Sec}>
-    <${Sec} title="URL do Site">
-      <div style=${{display:'flex',alignItems:'center',gap:10,padding:'12px 16px',borderRadius:12,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.09)',marginBottom:10}}>
-        <span style=${{fontSize:18}}>&#127760;</span>
-        <span style=${{fontSize:13,color:'rgba(255,255,255,0.7)',flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>https://our-timeline-sigma.vercel.app</span>
+      <div style=${{display:'flex',border:'1px solid rgba(255,255,255,0.09)',borderRadius:12,overflow:'hidden',background:'rgba(255,255,255,0.04)',marginBottom:10}}>
+        <span style=${{padding:'12px 14px',fontSize:12,color:'rgba(255,255,255,0.25)',borderRight:'1px solid rgba(255,255,255,0.07)',whiteSpace:'nowrap',fontFamily:'monospace'}}>
+          ${SITE}/
+        </span>
+        <input value=${slug}
+          onInput=${e=>onUpdate('slug',slugify(e.target.value))}
+          placeholder="nosso-primeiro-ano"
+          style=${{flex:1,background:'transparent',border:'none',padding:'12px 14px',fontSize:13,color:'rgba(255,255,255,0.85)',outline:'none',fontFamily:'monospace'}}/>
       </div>
       <div style=${{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',borderRadius:12,background:'rgba(16,185,129,0.05)',border:'1px solid rgba(16,185,129,0.15)'}}>
-        <${IC.Globe} s=${12}/><span style=${{fontSize:12,color:'#34d399',flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>${url}</span>
+        <${IC.Globe} s=${12}/>
+        <span style=${{fontSize:12,color:'#34d399',flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>${url}</span>
         <button onClick=${copy} style=${{display:'flex',alignItems:'center',gap:5,fontSize:11,color:copied?'#34d399':'rgba(52,211,153,0.6)',background:'none',border:'none',cursor:'pointer',fontFamily:'inherit',flexShrink:0}}>
           ${copied?html`<${IC.Check} s=${11}/> Copiado!`:html`<${IC.Copy} s=${11}/> Copiar`}
         </button>
       </div>
     </${Sec}>
-    <${Sec} title="Exportar para o Site">
+
+    <${Sec} title="Exportar HTML">
       <div style=${{padding:16,borderRadius:14,border:'1px solid rgba(201,169,110,0.2)',background:'rgba(201,169,110,0.05)',marginBottom:12}}>
-        <div style=${{fontSize:13,color:'#c9a96e',fontWeight:500,marginBottom:4}}>📋 Gerar APP_DATA para script.js</div>
-        <div style=${{fontSize:12,color:'rgba(255,255,255,0.4)',marginBottom:12}}>Copie e cole no script.js substituindo o APP_DATA existente.</div>
-        <div style=${{display:'flex',gap:8}}>
-          <button onClick=${()=>setShowCode(!showCode)} style=${{display:'flex',alignItems:'center',gap:6,padding:'9px 16px',background:'rgba(201,169,110,0.15)',border:'1px solid rgba(201,169,110,0.3)',borderRadius:10,color:'#c9a96e',fontSize:12,cursor:'pointer',fontFamily:'inherit'}}>
-            <${IC.Code} s=${12}/> ${showCode?'Ocultar':'Ver Código'}
-          </button>
-          <button onClick=${copyCode} style=${{display:'flex',alignItems:'center',gap:6,padding:'9px 16px',background:'#c9a96e',border:'none',borderRadius:10,color:'#000',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
-            <${IC.Copy} s=${12}/> Copiar Código
-          </button>
+        <div style=${{fontSize:13,color:'#c9a96e',fontWeight:600,marginBottom:6}}>
+          📄 Arquivo: ${slug}.html
         </div>
-        ${showCode&&html`<pre style=${{marginTop:12,padding:12,background:'rgba(0,0,0,0.4)',borderRadius:10,fontSize:11,color:'rgba(255,255,255,0.6)',overflowX:'auto',maxHeight:300,whiteSpace:'pre-wrap',wordBreak:'break-word'}}>${generateAppData()}</pre>`}
+        <div style=${{fontSize:12,color:'rgba(255,255,255,0.4)',lineHeight:1.8,marginBottom:14}}>
+          Cada retrospectiva é um arquivo HTML independente com todos os dados embutidos.<br/>
+          Após exportar, adicione o arquivo na raiz do seu projeto no Vercel.<br/>
+          Ele ficará acessível em <strong style=${{color:'rgba(255,255,255,0.65)'}}>${SITE}/${slug}</strong>
+        </div>
+        <button onClick=${exportHTML} disabled=${exporting}
+          style=${{display:'flex',alignItems:'center',gap:8,padding:'11px 22px',background:exporting?'rgba(201,169,110,0.4)':'#c9a96e',border:'none',borderRadius:11,color:'#000',fontSize:13,fontWeight:600,cursor:exporting?'wait':'pointer',fontFamily:'inherit',transition:'opacity 0.2s'}}>
+          <${IC.Download} s=${14}/> ${exporting?'Gerando arquivo...':'Exportar '+slug+'.html'}
+        </button>
+      </div>
+
+      <div style=${{padding:14,borderRadius:12,border:'1px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)'}}>
+        <div style=${{fontSize:11,color:'rgba(255,255,255,0.25)',textTransform:'uppercase',letterSpacing:3,marginBottom:10}}>Passo a passo</div>
+        <div style=${{display:'flex',flexDirection:'column',gap:8}}>
+          ${[
+            {n:'1',t:'Exporte o arquivo',d:`Clique em "Exportar ${slug}.html"`},
+            {n:'2',t:'Abra seu projeto no Vercel',d:'Acesse vercel.com → seu projeto → Files'},
+            {n:'3',t:'Faça upload do arquivo',d:`Arraste ${slug}.html para a raiz do projeto`},
+            {n:'4',t:'Acesse a URL',d:`${SITE}/${slug} ✅`},
+          ].map(s=>html`<div key=${s.n} style=${{display:'flex',gap:12,alignItems:'flex-start'}}>
+            <div style=${{width:22,height:22,borderRadius:'50%',background:'rgba(201,169,110,0.15)',border:'1px solid rgba(201,169,110,0.3)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,color:'#c9a96e',flexShrink:0,fontWeight:600}}>${s.n}</div>
+            <div>
+              <div style=${{fontSize:12,color:'rgba(255,255,255,0.7)',fontWeight:500}}>${s.t}</div>
+              <div style=${{fontSize:11,color:'rgba(255,255,255,0.3)',marginTop:2}}>${s.d}</div>
+            </div>
+          </div>`)}
+        </div>
       </div>
     </${Sec}>
+
+    <${Sec} title="Status">
+      <div style=${{padding:16,borderRadius:14,border:'1px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
+        <div><div style=${{fontSize:12,color:'rgba(255,255,255,0.3)',marginBottom:6}}>Status</div><${Badge} status=${retro.status}/></div>
+        <div style=${{display:'flex',gap:8}}>
+          <button onClick=${()=>onSave('draft')} style=${{display:'flex',alignItems:'center',gap:6,padding:'9px 16px',background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.09)',borderRadius:11,color:'rgba(255,255,255,0.55)',fontSize:12,cursor:'pointer',fontFamily:'inherit'}}><${IC.Save} s=${12}/> Salvar Rascunho</button>
+          <button onClick=${()=>onSave('published')} style=${{display:'flex',alignItems:'center',gap:6,padding:'9px 18px',background:'#c9a96e',border:'none',borderRadius:11,color:'#000',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}><${IC.Globe} s=${12}/> Marcar Publicada</button>
+        </div>
+      </div>
+    </${Sec}>
+
     <${Sec} title="Compartilhar">
       <div style=${{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
         ${[
@@ -773,13 +826,14 @@ function PublishTab({retro,onUpdate,onSave}) {
         ><span style=${{fontSize:20}}>${b.emoji}</span>${b.label}</button>`)}
       </div>
     </${Sec}>
+
     <${Sec} title="Resumo">
       <div style=${{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
-        ${[{v:retro.views||0,l:'Visualizações',e:'👁'},{v:active,l:'Seções ativas',e:'⚡'},{v:retro.timeline.length,l:'Eventos',e:'📅'},{v:retro.gallery.length,l:'Fotos',e:'🖼'},{v:retro.quiz.length,l:'Perguntas',e:'❓'},{v:retro.status==='published'?'Live':'Off',l:'Status',e:retro.status==='published'?'🟢':'⚪'}].map(s=>html`
-          <div key=${s.l} style=${{padding:'16px 12px',borderRadius:14,border:'1px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)',textAlign:'center'}}>
-            <div style=${{fontSize:20,marginBottom:6}}>${s.e}</div>
-            <div style=${{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:300,color:'#fff'}}>${s.v}</div>
-            <div style=${{fontSize:10,color:'rgba(255,255,255,0.3)',marginTop:3}}>${s.l}</div>
+        ${[{v:retro.views||0,l:'Visitas',e:'👁'},{v:active,l:'Seções',e:'⚡'},{v:retro.timeline.length,l:'Eventos',e:'📅'},{v:retro.gallery.length,l:'Fotos',e:'🖼'},{v:retro.quiz.length,l:'Perguntas',e:'❓'},{v:retro.status==='published'?'Live':'Off',l:'Status',e:retro.status==='published'?'🟢':'⚪'}].map(s=>html`
+          <div key=${s.l} style=${{padding:'14px 10px',borderRadius:14,border:'1px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)',textAlign:'center'}}>
+            <div style=${{fontSize:20,marginBottom:4}}>${s.e}</div>
+            <div style=${{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:300,color:'#fff'}}>${s.v}</div>
+            <div style=${{fontSize:10,color:'rgba(255,255,255,0.3)',marginTop:2}}>${s.l}</div>
           </div>`)}
       </div>
     </${Sec}>

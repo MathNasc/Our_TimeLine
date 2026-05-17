@@ -3,7 +3,7 @@
    Use o Admin (admin/index.html) → aba Publicar → Copiar Código
    para gerar o APP_DATA personalizado.
 ══════════════════════════════════════════════════════ */
-const APP_DATA = {
+const APP_DATA = window.__RETRO_DATA__ || {
   casal:  { meuNome:"Matheus", nomeDela:"Marcela", apelido:"Moi ❤️" },
   datas:  { matchDate:"27 de fevereiro de 2025", primeiroEncontro:"22 de março de 2025", primeiroBeijo:"22 de março de 2025", primeiraViajem:"01 de maio de 2025", pedidoNamoro:"01 de maio de 2025", nossoAp:"11 de março de 2026", aniversario1Ano:"01 de maio de 2026" },
   textos: { subtitulo:"Uma pequena experiência para a pessoa mais importante da minha vida.", mensagemInicial:"Há um ano eu fiz uma das melhores escolhas da minha vida...", introducao:"Eu escolhi você. E cada dia desde então me prova que foi a escolha mais certa que já fiz.", mensagemFinal:"Feliz 1 ano, meu amor. Que venham muitos outros, sempre ao seu lado.", localPresenteFinal:"SOU EU!!! 🌹" },
@@ -43,10 +43,12 @@ const APP_DATA = {
   fotosGerais:{ capa:"", fundo:"" }
 };
 
+if(!window.__RETRO_DATA__){
 (function(){
   const ds=APP_DATA.datas,order=["matchDate","primeiroEncontro","primeiroBeijo","pedidoNamoro","primeiraViajem","nossoAp","aniversario1Ano"];
   order.forEach((k,i)=>{ if(APP_DATA.timeline[i]) APP_DATA.timeline[i].data=ds[k]||""; });
 })();
+}
 
 const STATE={currentScreen:"screen-cover",quizIndex:0,quizScore:0,motivosVistos:new Set(),motivoAtual:null,screenOrder:["screen-cover","screen-intro","screen-quiz","screen-timeline","screen-impact","screen-motivos","screen-final","screen-presente"],musicPlaying:false};
 const $=id=>document.getElementById(id);
