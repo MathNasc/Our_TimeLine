@@ -376,7 +376,7 @@ function Editor({retro,tab,onTabChange,onUpdate,onSave,onBack,onPreview}) {
         ${tab==='gallery'  &&html`<${GalleryTab}  retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='quiz'     &&html`<${QuizTab}     retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='music'    &&html`<${MusicTab}    retro=${retro} onUpdate=${onUpdate}/>`}
-        {tab==='cartas'   &&html`<${CartasTab}   retro=${retro} onUpdate=${onUpdate}/>`}
+        ${tab==='cartas'  &&html`<${CartasTab}   retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='design'   &&html`<${DesignTab}   retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='sections' &&html`<${SectionsTab} retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='publish'  &&html`<${PublishTab}  retro=${retro} onUpdate=${onUpdate} onSave=${save}/>`}
@@ -770,27 +770,89 @@ function PublishTab({retro,onUpdate,onSave}) {
   };
 
   const exportHTML=async()=>{
-    setExporting(true);
-    try {
-      const resp=await fetch('/retro.html');
-      if(!resp.ok) throw new Error('retro.html não encontrado');
-      let html=await resp.text();
-      const couple=[retro.couple.name1,retro.couple.name2].filter(Boolean).join(' & ')||'Nossa Retrospectiva';
-      html=html.replace('<title>Nosso Primeiro Ano \u2764\ufe0f</title>',`<title>${couple} \u2764\ufe0f</title>`);
-      html=html.replace('href="manifest.json"','href="/manifest.json"');
-      html=html.replace('href="icons/icon-192.png"','href="/icons/icon-192.png"');
-      html=html.replace('href="style.css"','href="/style.css"');
-      const data=JSON.stringify(toAppData(retro));
-      const inject=`<script>\nwindow.__RETRO_DATA__=${data};\n<\/script>\n  `;
-      html=html.replace('<script src="script.js">',inject+'<script src="/script.js">');
-      const blob=new Blob([html],{type:'text/html;charset=utf-8'});
-      const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:`${slug}.html`});
-      a.click();
-    } catch(e) {
-      alert('Erro ao exportar: '+e.message+'\n\nAbra o admin pelo Vercel (não como arquivo local).');
+  setExporting(true);
+  try {
+    // Busca todos os recursos do servidor
+    const [htmlR,cssR,jsR]=await Promise.all([
+      fetch('/retro.html'),
+      fetch('/style.css'),
+      fetch('/script.js')
+    ]);
+    if(!htmlR.ok) throw new Error('retro.html não encontrado no servidor');
+
+    let tmpl=await htmlR.text();
+    let css=(cssR.ok?await cssR.text():'');
+    let js=(jsR.ok?await jsR.text():'');
+
+    /* ── Corrige JS (funciona mesmo com versão antiga no servidor) ── */
+    if(!js.includes('window.__RETRO_DATA__||')&&!js.includes('window.__RETRO_DATA__ ||')){
+      js=js.replace('const APP_DATA = {','const APP_DATA = window.__RETRO_DATA__ || {');
     }
-    setExporting(false);
-  };
+    if(!js.includes('APP_DATA.textos.titulo')){
+      js=js.replace(
+        'if(t)t.textContent="Nosso Primeiro Ano ❤️";',
+        'if(t)t.textContent=APP_DATA.textos.titulo||"Nosso Primeiro Ano ❤️";'
+      );
+    }
+    if(!js.includes("titulo:")){
+      js=js.replace("subtitulo:","titulo:\"Nosso Primeiro Ano ❤️\",subtitulo:");
+    }
+    if(!js.includes('!window.__RETRO_DATA__')){
+      const ii=js.indexOf('(function(){const ds=APP_DATA.datas');
+      if(ii!==-1){const ie=js.indexOf('})();',ii)+5;const ob=js.slice(ii,ie);js=js.replace(ob,'if(!window.__RETRO_DATA__){'+ob+'}');}
+    }
+    // Corrige threshold do botão (versão antiga usa >=3 fixo)
+    if(!js.includes('Math.min(3,Math.max')){
+      js=js.replace(
+        'if(btnDone&&STATE.motivosVistos.size>=3){btnDone.style.opacity="1";btnDone.style.pointerEvents="all";}',
+        'if(btnDone){const thr=Math.min(3,Math.max(1,APP_DATA.motivos.length));if(STATE.motivosVistos.size>=thr){btnDone.style.opacity="1";btnDone.style.pointerEvents="all";}}'
+      );
+    }
+    // Guard motivos vazios
+    const nextFn='function showNextMotivo(){';
+    if(js.includes(nextFn)&&!js.includes('motivos.length===0')){
+      js=js.replace(nextFn,nextFn+'\n  const _m=APP_DATA.motivos;if(!_m||_m.length===0){const bd=$(\'btn-motivos-done\');if(bd){bd.style.opacity="1";bd.style.pointerEvents="all";}return;}');
+    }
+
+    /* ── Corrige texto HTML (funciona mesmo com versão antiga) ── */
+    tmpl=tmpl.replace('>Por que eu te amo<','>Cartas de Amor<');
+    tmpl=tmpl.replace('>Um por um...<','>Uma por uma...<');
+    tmpl=tmpl.replace('id="btn-next-motivo">Próximo Motivo','id="btn-next-motivo">Próxima Carta');
+    tmpl=tmpl.replace('id="btn-next-motivo">Proximo Motivo','id="btn-next-motivo">Proxima Carta');
+
+    // Título personalizado
+    const couple=[retro.couple.name1,retro.couple.name2].filter(Boolean).join(' & ')||'Nossa Retrospectiva';
+    tmpl=tmpl.replace('<title>Nosso Primeiro Ano ❤️</title>','<title>'+couple+' ❤️</title>');
+
+    /* ── Inlina CSS ── */
+    if(css){
+      tmpl=tmpl.replace('<link rel="stylesheet" href="style.css"/>','<style>'+css+'</style>');
+    }
+
+    /* ── Injeta dados + Inlina JS ── */
+    const appDataStr=JSON.stringify(toAppData(retro)).replace(/<\//g,'<\\/');
+    const safeJs=js.replace(/<\/script>/gi,'<\\/script>');
+    const inlined=
+      '<script>\nwindow.__RETRO_DATA__='+appDataStr+';\n<'+'\/script>\n'+
+      '<script>\n'+safeJs+'\n<'+'\/script>';
+    tmpl=tmpl.replace('<script src="script.js"><'+'\/script>',inlined);
+
+    // Remove service worker (não necessário em arquivo standalone)
+    tmpl=tmpl.replace(/<script>[^<]*serviceWorker[^<]*<\/script>/gs,'');
+
+    /* ── Download ── */
+    const blob=new Blob([tmpl],{type:'text/html;charset=utf-8'});
+    const a=Object.assign(document.createElement('a'),{
+      href:URL.createObjectURL(blob),
+      download:slug+'.html'
+    });
+    a.click();
+
+  } catch(e){
+    alert('Erro ao exportar: '+e.message+'\n\nAbra o admin pelo Vercel (não como arquivo local).');
+  }
+  setExporting(false);
+};;
 
   const exportJSON=()=>{const b=new Blob([JSON.stringify(retro,null,2)],{type:'application/json'});const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:`${slug}.json`});a.click();};
 
