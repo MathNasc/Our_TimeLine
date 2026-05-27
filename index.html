@@ -809,9 +809,10 @@ function PublishTab({retro,onUpdate,onSave}) {
       );
     }
     // Guard motivos vazios
-    const nextFn='function showNextMotivo(){';
-    if(js.includes(nextFn)&&!js.includes('motivos.length===0')){
-      js=js.replace(nextFn,nextFn+'\n  const _m=APP_DATA.motivos;if(!_m||_m.length===0){const bd=$(\'btn-motivos-done\');if(bd){bd.style.opacity="1";bd.style.pointerEvents="all";}return;}');
+    // Guard motivos: usa variável existente (sem redeclarar)
+    const _btnDone='btnDone=$(\'btn-motivos-done\'));';
+    if(js.includes(_btnDone)&&!js.includes('motivos.length===0')){
+      js=js.replace(_btnDone, _btnDone+'\n  if(!motivos||motivos.length===0){if(btnDone){btnDone.style.opacity="1";btnDone.style.pointerEvents="all";}return;}');
     }
 
     /* ── Corrige texto HTML (funciona mesmo com versão antiga) ── */

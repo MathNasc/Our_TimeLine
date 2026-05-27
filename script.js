@@ -107,10 +107,8 @@ function startImpactAnimation(){
   setTimeout(()=>{if(btn){btn.classList.remove("hidden");btn.style.animation="fade-up 0.7s cubic-bezier(0,0,0.2,1) forwards";}},4500);
 }
 function showNextMotivo(){
-  const motivos=APP_DATA.motivos;
-  if(!motivos||motivos.length===0){const bd=$("btn-motivos-done");if(bd){bd.style.opacity="1";bd.style.pointerEvents="all";}return;}
-
   const motivos=APP_DATA.motivos,card=$("motivo-card"),numEl=$("motivo-numero"),textoEl=$("motivo-texto"),btnDone=$("btn-motivos-done");
+  if(!motivos||motivos.length===0){if(btnDone){btnDone.style.opacity="1";btnDone.style.pointerEvents="all";}return;}
   const disp=motivos.map((_,i)=>i).filter(i=>!STATE.motivosVistos.has(i));
   if(disp.length===0){STATE.motivosVistos.clear();localStorage.removeItem("motivosVistos");}
   const pool=disp.length>0?disp:motivos.map((_,i)=>i),idx=pool[Math.floor(Math.random()*pool.length)];
