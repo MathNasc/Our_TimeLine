@@ -8,7 +8,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, '.'), { extensions: ['html'] }));
 
 // Store published retrospectives
-const DB_FILE = path.join(__dirname, 'published_retros.json');
+const DB_FILE = process.env.VERCEL ? '/tmp/published_retros.json' : path.join(__dirname, 'published_retros.json');
 let publishedData = {};
 try {
   if (fs.existsSync(DB_FILE)) {
@@ -88,6 +88,10 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+module.exports = app;

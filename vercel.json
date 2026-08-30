@@ -1,14 +1,22 @@
 {
-  "rewrites": [
-    { "source": "/retro", "destination": "/retro.html" }
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "index.html",
+          "nosso-primeiro-ano/**",
+          "data/**"
+        ]
+      }
+    }
   ],
-  "headers": [
+  "rewrites": [
     {
       "source": "/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" }
-      ]
+      "destination": "/server.js"
     }
   ]
 }
