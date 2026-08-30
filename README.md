@@ -1,78 +1,76 @@
-# Nosso Primeiro Ano ❤️
+# Nossa Retrospectiva ❤️
 
-## Estrutura do Projeto
+Uma plataforma (SaaS) completa para criar, gerenciar e compartilhar retrospectivas e momentos especiais de relacionamentos.
 
-```
-nosso-primeiro-ano/
-├── index.html            ← Site da retrospectiva (experiência final)
-├── style.css             ← Estilos do site
-├── script.js             ← JavaScript do site
-├── manifest.json         ← Configuração PWA
-├── sw.js                 ← Service Worker (offline)
-├── admin/
-│   └── index.html        ← Painel Administrativo (abrir no navegador)
-├── fotos/                ← Coloque suas fotos aqui
-│   └── README.txt
-├── icons/                ← Ícones do PWA
-│   └── README.txt
-└── .well-known/
-    └── assetlinks.json   ← Config Android TWA
-```
+## 🚀 Arquitetura e Tecnologias
 
-## ⚡ Início Rápido
+O projeto foi modernizado de uma página estática para uma plataforma web Full-Stack robusta, utilizando:
 
-### 1. Abrir o Admin
-Abra `admin/index.html` no seu navegador.
-O admin funciona localmente — sem servidor necessário.
+* **Backend:** Node.js com Express.js
+* **Frontend (Dashboard):** Preact, HTM e Tailwind CSS (via CDN)
+* **Banco de Dados:** PostgreSQL hospedado no Supabase
+* **ORM:** Drizzle ORM
+* **Autenticação:** Supabase Auth (E-mail e Senha)
+* **Armazenamento (Uploads):** Supabase Storage + Multer (Node)
+* **Build e Deploy:** Esbuild, TypeScript (tsc) e otimizado para **Vercel Serverless Functions**.
 
-### 2. Criar sua Retrospectiva
-- Clique em **Nova Retrospectiva**
-- Preencha todos os dados nas abas
-- Clique em **Publicar**
-- Clique em **Exportar APP_DATA** para gerar o código
+## ✨ Funcionalidades
 
-### 3. Aplicar ao Site
-- Cole o APP_DATA exportado no `script.js`
-- Adicione suas fotos na pasta `fotos/`
-- Abra `index.html` no navegador
+* **Sistema de Autenticação:** Crie sua conta e acesse seu dashboard exclusivo.
+* **Upload Direto para Nuvem:** Capas, fotos de galeria e linha do tempo são salvas no Supabase Storage. Nenhuma imagem precisa ser salva manualmente em pastas.
+* **Privacidade e Rascunhos:** Retrospectivas em edição ficam offline (rascunho). Apenas o autor logado pode visualizá-las no preview.
+* **URLs Públicas Personalizadas:** Escolha o link da sua retrospectiva (ex: `seudominio.com/r/joao-e-maria`) e torne-a acessível quando estiver pronta.
+* **SSR e Metatags Dinâmicas:** As páginas públicas renderizam as Open Graph tags (OG) dinamicamente para garantir um compartilhamento perfeito no WhatsApp/Instagram.
 
-## 🌐 Deploy (Netlify)
+## 🛠️ Como rodar localmente (Desenvolvimento)
 
-1. Acesse https://netlify.com
-2. Arraste a pasta inteira para o Netlify Drop
-3. Seu site estará online em segundos!
+### 1. Pré-requisitos
+* Node.js (v18+)
+* Conta no Supabase (com projeto configurado)
 
-## 🛠️ Servidor Local
+### 2. Instalação
+Clone o projeto e instale as dependências:
+\`\`\`bash
+npm install
+\`\`\`
 
-```bash
-# Python (recomendado)
-python -m http.server 8080
-# Abra: http://localhost:8080
+### 3. Variáveis de Ambiente
+Crie um arquivo \`.env\` na raiz do projeto com as chaves do seu Supabase:
 
-# Node.js
-npx serve .
-```
+\`\`\`env
+# URL de Conexão com Banco de Dados PostgreSQL (Pooler ou Direct)
+DATABASE_URL="postgresql://user:pass@host:port/postgres"
 
-## 📁 Fotos
+# Supabase API (Storage e Auth)
+SUPABASE_URL="https://seu-projeto.supabase.co"
+SUPABASE_ANON_KEY="eyJhb..."
+SUPABASE_SERVICE_ROLE_KEY="eyJhb..."
+\`\`\`
 
-Coloque suas fotos na pasta `fotos/` e referencie no script:
-```js
-foto: "fotos/nome-da-foto.jpg"
-```
+### 4. Estrutura de Banco de Dados
+Sincronize o schema do banco de dados (certifique-se de estar rodando em um DB limpo):
+\`\`\`bash
+npx drizzle-kit push --config=src/db/drizzle.config.ts
+\`\`\`
+E crie o bucket \`retrospectives\` como **Público** no Supabase Storage.
 
-Formatos suportados: JPG, PNG, WEBP, GIF
+### 5. Iniciar o Servidor
+Execute o servidor em ambiente de desenvolvimento (ou build):
+\`\`\`bash
+npm run build
+npm run start
+\`\`\`
+O site e o painel estarão disponíveis em \`http://localhost:3000\`.
 
-## 🎵 Música
+## 🌐 Deploy (Vercel)
 
-- **Link externo**: Cole uma URL do Spotify, YouTube ou MP3 direto
-- **Arquivo local**: Coloque o MP3 na raiz e use `musica.mp3`
+O projeto está configurado para deploy imediato e nativo na **Vercel** através do \`vercel.json\`.
+O backend funcionará como Serverless Functions.
 
-## 📱 PWA (Instalar no Celular)
-
-O site já é um PWA. No celular:
-1. Abra no Chrome
-2. Toque nos 3 pontos → "Adicionar à tela inicial"
-3. O app aparecerá como ícone na home
+1. Suba o projeto para um repositório no GitHub.
+2. Importe-o no painel da Vercel.
+3. Configure as **Environment Variables** (idênticas ao \`.env\`).
+4. A Vercel executará o comando \`npm run build\` automaticamente e realizará o deploy.
 
 ---
-Feito com ❤️
+Desenvolvido com ❤️
