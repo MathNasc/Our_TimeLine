@@ -45,6 +45,16 @@ const requireAuth = async (req, res, next) => {
 
 // --- NEW API ROUTES ---
 
+
+app.get('/api/test-db', async (req, res) => {
+  try {
+    const result = await db.select().from(require('./dist/db/schema.js').retrospectives).limit(1);
+    res.json({ success: true, result });
+  } catch (err) {
+    res.json({ success: false, error: err.message });
+  }
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -96,8 +106,45 @@ app.delete('/api/retrospectives/:id', requireAuth, async (req, res) => {
   }
 });
 
-app.post('/api/upload', requireAuth, upload.single('file'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file provided' });
+app.post('/api/upload-base64', requireAuth, async (req, res) => {
+  const { fileData, fileName, contentType, retroId, path: prefix } = req.body;
+  
+  if (!fileData || !retroId || !prefix) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin client is missing. Verify SUPABASE_SERVICE_ROLE_KEY in Vercel settings.');
+    }
+
+    const base64Content = fileData.split(',')[1];
+    const buffer = Buffer.from(base64Content, 'base64');
+    
+    // Fallback original extension, though it will likely be jpeg from canvas
+    const fileExt = fileName ? (fileName.split('.').pop() || 'jpg') : 'jpg';
+    const storageFileName = `${prefix}_${Date.now()}.${fileExt}`;
+    const filePath = `${retroId}/${storageFileName}`;
+    
+    const { data, error } = await supabaseAdmin.storage
+      .from('retrospectives')
+      .upload(filePath, buffer, {
+        contentType: contentType || 'image/jpeg',
+        upsert: true
+      });
+      
+    if (error) throw error;
+    
+    const { data: publicUrlData } = supabaseAdmin.storage
+      .from('retrospectives')
+      .getPublicUrl(filePath);
+      
+    res.json({ url: publicUrlData.publicUrl });
+  } catch (err) {
+    console.error('Upload error:', err);
+    res.status(500).json({ error: 'Upload failed', details: err.message });
+  }
+});
   const { retroId, path: prefix } = req.body;
   if (!retroId || !prefix) return res.status(400).json({ error: 'Missing retroId or path' });
   
