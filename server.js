@@ -145,33 +145,6 @@ app.post('/api/upload-base64', requireAuth, async (req, res) => {
     res.status(500).json({ error: 'Upload failed', details: err.message });
   }
 });
-  const { retroId, path: prefix } = req.body;
-  if (!retroId || !prefix) return res.status(400).json({ error: 'Missing retroId or path' });
-  
-  try {
-    const fileExt = req.file.originalname.split('.').pop() || 'png';
-    const fileName = `${prefix}/${retroId}_${Date.now()}.${fileExt}`;
-    const filePath = `${retroId}/${fileName}`;
-    
-    const { data, error } = await supabaseAdmin.storage
-      .from('retrospectives')
-      .upload(filePath, req.file.buffer, {
-        contentType: req.file.mimetype,
-        upsert: true
-      });
-      
-    if (error) throw error;
-    
-    const { data: publicUrlData } = supabaseAdmin.storage
-      .from('retrospectives')
-      .getPublicUrl(filePath);
-      
-    res.json({ url: publicUrlData.publicUrl });
-  } catch (err) {
-    console.error('Upload error:', err);
-    res.status(500).json({ error: 'Upload failed', details: err.message });
-  }
-});
 
 app.post('/api/publish', requireAuth, async (req, res) => {
   const data = req.body;
