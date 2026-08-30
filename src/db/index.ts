@@ -6,9 +6,9 @@ import * as schema from "./schema.js";
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-  throw new Error("DATABASE_URL environment variable is missing.");
+  console.error("DATABASE_URL environment variable is missing. Database connection will fail.");
 }
 
 // Disable prefetch as it is not supported for "Transaction" pool mode
-const client = postgres(connectionString, { prepare: false });
-export const db = drizzle(client, { schema });
+const client = connectionString ? postgres(connectionString, { prepare: false }) : null as any;
+export const db = client ? drizzle(client, { schema }) : null as any;

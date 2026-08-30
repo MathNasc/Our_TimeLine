@@ -44,6 +44,18 @@ const requireAuth = async (req, res, next) => {
 };
 
 // --- NEW API ROUTES ---
+
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    env_keys: Object.keys(process.env).filter(k => k.includes('SUPA') || k.includes('DATA')),
+    has_db: !!db,
+    has_supabase: !!supabaseAdmin,
+    dirname: __dirname,
+    cwd: process.cwd()
+  });
+});
+
 app.get('/api/config', (req, res) => {
   res.json({
     supabaseUrl: process.env.SUPABASE_URL,
