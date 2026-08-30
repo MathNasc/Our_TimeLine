@@ -154,10 +154,10 @@ function populateGallery(){
   if(!APP_DATA.galeria) return;
   APP_DATA.galeria.forEach((foto, i) => {
     const el = document.createElement("div");
-    el.style.cssText = `background:#fff;padding:8px 8px 30px;border-radius:4px;box-shadow:0 4px 15px rgba(0,0,0,0.15);transform:rotate(${Math.random()*6-3}deg);transition:transform 0.3s ease;cursor:pointer;`;
-    el.onmouseenter = () => el.style.transform = `scale(1.05) rotate(0deg)`;
-    el.onmouseleave = () => el.style.transform = `rotate(${Math.random()*6-3}deg)`;
-    el.innerHTML = `<div style="width:100%;aspect-ratio:1;border-radius:2px;overflow:hidden;background:#eee;"><img src="${foto.url}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy"/></div>`;
+    const rot = Math.random()*6-3;
+    el.className = "gallery-item";
+    el.style.setProperty('--rot', rot + 'deg');
+    el.innerHTML = `<div class="gallery-photo"><img src="${foto.url}" loading="lazy"/></div>`;
     grid.appendChild(el);
   });
 }

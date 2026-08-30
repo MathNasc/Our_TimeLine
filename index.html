@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
   <title>Admin — Retrospectiva ❤️</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -18,6 +18,54 @@
     ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
     @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     .fade-in{animation:fadeIn 0.3s ease forwards}
+  
+    @media (max-width: 600px) {
+      .dashboard-main { padding: 24px 16px !important; }
+      .editor-main-inner { padding: 24px 16px !important; }
+    }
+</style>
+
+  <style>
+    /* Responsive Admin CSS */
+    .editor-layout { display: flex; height: 100dvh; overflow: hidden; }
+    .editor-sidebar { width: 210px; flex-shrink: 0; display: flex; flex-direction: column; background: #060610; border-right: 1px solid rgba(255,255,255,0.06); }
+    .editor-sidebar-header { padding: 16px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .editor-sidebar-nav { flex: 1; padding: 10px 8px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+    .editor-sidebar-footer { padding: 10px 10px 16px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 6px; }
+    .editor-main { flex: 1; overflow-y: auto; background: #0a0a12; border-right: 1px solid rgba(255,255,255,0.06); }
+    .editor-main-inner { max-width: 600px; margin: 0 auto; padding: 44px 40px; }
+    .editor-preview { width: 40%; min-width: 350px; background: #000; display: flex; flex-direction: column; }
+    
+    .dashboard-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 48px; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    
+    @media (max-width: 900px) {
+      .editor-layout { flex-direction: column !important; }
+      .editor-sidebar { width: 100% !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.06); height: auto !important; }
+      .editor-sidebar-nav { flex-direction: row !important; overflow-x: auto !important; padding: 12px !important; }
+      .editor-sidebar-nav button { white-space: nowrap; flex-shrink: 0; }
+      .editor-sidebar-footer { flex-direction: row !important; padding: 10px !important; }
+      .editor-sidebar-footer button { flex: 1; }
+      .editor-main { flex: 1 !important; border-right: none !important; }
+      .editor-main-inner { padding: 24px 20px !important; max-width: 100% !important; }
+      .editor-preview { display: none !important; /* Hide preview panel, rely on Preview Modal */ }
+      
+      .dashboard-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+      .dashboard-grid { grid-template-columns: 1fr !important; }
+      .form-grid-3 { grid-template-columns: 1fr 1fr !important; }
+    }
+    
+    @media (max-width: 600px) {
+      .form-grid-2 { grid-template-columns: 1fr !important; }
+    }
+    
+    /* Global scrollbar for admin */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    
   </style>
 </head>
 <body>
@@ -251,8 +299,8 @@ function Dashboard({retros,onCreate,onEdit,onDelete,onDuplicate,onPreview}) {
         </button>
       </div>
     </header>
-    <main style=${{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
-      <div style=${{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16,marginBottom:48}}>
+    <main class="dashboard-main" style=${{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
+      <div class="dashboard-stats">
         ${stats.map(s=>html`<div key=${s.label} style=${{padding:24,borderRadius:20,border:'1px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)'}}>
           <div style=${{fontSize:24,marginBottom:12}}>${s.emoji}</div>
           <div style=${{fontFamily:"'Cormorant Garamond',serif",fontSize:36,fontWeight:300,lineHeight:1}}>${s.v}</div>
@@ -270,7 +318,7 @@ function Dashboard({retros,onCreate,onEdit,onDelete,onDuplicate,onPreview}) {
             <div style=${{fontSize:13,color:'rgba(255,255,255,0.25)',marginBottom:32}}>Crie sua primeira experiência romântica</div>
             <button onClick=${onCreate} style=${{padding:'12px 32px',background:'#c9a96e',border:'none',borderRadius:12,color:'#000',fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>Criar agora</button>
           </div>`
-        : html`<div style=${{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:16}}>
+        : html`<div class="dashboard-grid">
             ${retros.map(r=>html`<${RetroCard} key=${r.id} retro=${r} onEdit=${()=>onEdit(r)} onDelete=${()=>onDelete(r.id)} onDuplicate=${()=>onDuplicate(r)} onPreview=${()=>onPreview(r)}/>`)}
             <button onClick=${onCreate}
               style=${{border:'2px dashed rgba(255,255,255,0.08)',borderRadius:20,padding:32,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:12,color:'rgba(255,255,255,0.18)',background:'none',cursor:'pointer',minHeight:200,fontFamily:'inherit',transition:'all 0.2s'}}
@@ -348,9 +396,9 @@ function Editor({retro,tab,onTabChange,onUpdate,onSave,onBack,onPreview}) {
 
   const couple=[retro.couple.name1,retro.couple.name2].filter(Boolean).join(' & ')||'Nova Retrospectiva';
   const sideBtn={display:'flex',alignItems:'center',justifyContent:'center',gap:6,padding:'9px',borderRadius:10,fontSize:12,cursor:'pointer',fontFamily:'inherit',width:'100%'};
-  return html`<div style=${{display:'flex',height:'100vh',overflow:'hidden'}}>
-    <aside style=${{width:210,flexShrink:0,borderRight:'1px solid rgba(255,255,255,0.06)',display:'flex',flexDirection:'column',background:'#060610',overflow:'hidden'}}>
-      <div style=${{padding:'16px 14px',borderBottom:'1px solid rgba(255,255,255,0.06)'}}>
+  return html`<div class="editor-layout">
+    <aside class="editor-sidebar">
+      <div class="editor-sidebar-header">
         <button onClick=${onBack}
           style=${{display:'flex',alignItems:'center',gap:6,fontSize:11,color:'rgba(255,255,255,0.3)',background:'none',border:'none',cursor:'pointer',padding:'4px 0',marginBottom:12,fontFamily:'inherit'}}
           onMouseEnter=${e=>e.currentTarget.style.color='rgba(255,255,255,0.6)'}
@@ -359,7 +407,7 @@ function Editor({retro,tab,onTabChange,onUpdate,onSave,onBack,onPreview}) {
         <div style=${{fontSize:13,fontWeight:500,color:'#fff',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>${couple}</div>
         <div style=${{marginTop:8}}><${Badge} status=${retro.status}/></div>
       </div>
-      <nav style=${{flex:1,padding:'10px 8px',overflowY:'auto',display:'flex',flexDirection:'column',gap:2}}>
+      <nav class="editor-sidebar-nav">
         ${TABS.map(t=>{
           const Ico=IC[t.icon]; const active=tab===t.id;
           return html`<button key=${t.id} onClick=${()=>onTabChange(t.id)}
@@ -369,14 +417,14 @@ function Editor({retro,tab,onTabChange,onUpdate,onSave,onBack,onPreview}) {
           >${Ico&&html`<${Ico} s=${14}/>`} ${t.label}</button>`;
         })}
       </nav>
-      <div style=${{padding:'10px 10px 16px',borderTop:'1px solid rgba(255,255,255,0.06)',display:'flex',flexDirection:'column',gap:6}}>
+      <div class="editor-sidebar-footer">
         <button onClick=${onPreview} style=${{...sideBtn,background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.07)',color:'rgba(255,255,255,0.4)'}}><${IC.Eye} s=${13}/> Preview</button>
         <button onClick=${()=>save('draft')} disabled=${saving} style=${{...sideBtn,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.09)',color:'rgba(255,255,255,0.55)'}}><${IC.Save} s=${13}/> ${saving?'Salvando...':'Salvar Rascunho'}</button>
         <button onClick=${()=>save('published')} disabled=${saving} style=${{...sideBtn,background:'#c9a96e',border:'none',color:'#000',fontWeight:600}}><${IC.Globe} s=${13}/> Publicar</button>
       </div>
     </aside>
-    <main style=${{flex:1,overflowY:'auto',background:'#0a0a12',borderRight:'1px solid rgba(255,255,255,0.06)'}}>
-      <div style=${{maxWidth:600,margin:'0 auto',padding:'44px 40px'}} class="fade-in">
+    <main class="editor-main">
+      <div class="editor-main-inner fade-in">
         ${tab==='basic'    &&html`<${BasicTab}    retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='timeline' &&html`<${TimelineTab} retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='gallery'  &&html`<${GalleryTab}  retro=${retro} onUpdate=${onUpdate}/>`}
@@ -388,7 +436,7 @@ function Editor({retro,tab,onTabChange,onUpdate,onSave,onBack,onPreview}) {
         ${tab==='publish'  &&html`<${PublishTab}  retro=${retro} onUpdate=${onUpdate} onSave=${save}/>`}
       </div>
     </main>
-    <aside style=${{width:'40%',minWidth:350,background:'#000',display:'flex',flexDirection:'column'}}>
+    <aside class="editor-preview">
       <div style=${{padding:'12px 16px',borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',alignItems:'center',justifyContent:'space-between',fontSize:12,color:'rgba(255,255,255,0.4)'}}>
         <span style=${{display:'flex',alignItems:'center',gap:6}}><${IC.Eye} s=${12}/> Preview em tempo real</span>
         <a href="/r/${retro.slug||'preview'}" target="_blank" style=${{color:'#c9a96e',textDecoration:'none',display:'flex',alignItems:'center',gap:4}}>Abrir Nova Aba <${IC.Globe} s=${10}/></a>
@@ -403,12 +451,12 @@ function BasicTab({retro,onUpdate}) {
   return html`<div>
     <${TabH} title="Informações Básicas" sub="Configure o casal e os textos"/>
     <${Sec} title="O Casal">
-      <div style=${{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+      <div class="form-grid-2" style=${{marginBottom:12}}>
         <${Inp} label="Seu Nome" value=${retro.couple.name1} onChange=${v=>onUpdate('couple.name1',v)} placeholder="Matheus"/>
         <${Inp} label="Nome Dela/Dele" value=${retro.couple.name2} onChange=${v=>onUpdate('couple.name2',v)} placeholder="Marcela"/>
       </div>
       <${Inp} label="Apelido Carinhoso" value=${retro.couple.nickname} onChange=${v=>onUpdate('couple.nickname',v)} placeholder="Moi ❤️"/>
-      <div style=${{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginTop:12}}>
+      <div class="form-grid-2" style=${{marginTop:12}}>
         <${Inp} label="Data do Match" type="date" value=${retro.couple.matchDate} onChange=${v=>onUpdate('couple.matchDate',v)}/>
         <${Inp} label="Data de Namoro" type="date" value=${retro.couple.startDate} onChange=${v=>onUpdate('couple.startDate',v)}/>
       </div>
@@ -465,7 +513,7 @@ function TimelineTab({retro,onUpdate}) {
               <div style=${{color:'rgba(255,255,255,0.2)',transform:exp===ev.id?'rotate(180deg)':'none',transition:'transform 0.2s',display:'flex'}}><${IC.Chev} s=${13}/></div>
             </div>
             ${exp===ev.id&&html`<div style=${{padding:'16px 14px 14px',borderTop:'1px solid rgba(255,255,255,0.06)',display:'flex',flexDirection:'column',gap:12}}>
-              <div style=${{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+              <div class="form-grid-2" style=${{gap:10}}>
                 <${Inp} label="Título" value=${ev.title} onChange=${v=>upd(ev.id,'title',v)} placeholder="Primeiro Encontro"/>
                 <${Inp} label="Data" type="date" value=${ev.date} onChange=${v=>upd(ev.id,'date',v)}/>
               </div>
@@ -515,7 +563,7 @@ function GalleryTab({retro,onUpdate}) {
       <div style=${{fontSize:11,color:'rgba(255,255,255,0.15)',marginTop:6}}>JPG, PNG, WEBP</div>
       <input ref=${ref} type="file" accept="image/*" multiple style=${{display:'none'}} onInput=${e=>upload(e.target.files)}/>
     </div>
-    ${retro.gallery.length>0&&html`<div style=${{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
+    ${retro.gallery.length>0&&html`<div class="form-grid-3">
       ${retro.gallery.map((p,i)=>html`<div key=${p.id}
         draggable=${true} onDragStart=${()=>onDS(i)} onDragOver=${e=>onDO(e,i)} onDragEnd=${()=>setDrag(null)}
         style=${{position:'relative',borderRadius:14,overflow:'hidden',aspectRatio:'1',border:'1px solid rgba(255,255,255,0.07)',cursor:'grab',opacity:drag===i?0.4:1,transition:'opacity 0.2s'}}
@@ -585,7 +633,7 @@ function QuizTab({retro,onUpdate}) {
                   </div>`)}
                 </div>
               </div>
-              <div style=${{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+              <div class="form-grid-2" style=${{gap:10}}>
                 <${Inp} label="Msg. Acerto" value=${q.hitMessage} onChange=${v=>upd(q.id,'hitMessage',v)} placeholder="Acertou! 🥰"/>
                 <${Inp} label="Msg. Erro"   value=${q.missMessage} onChange=${v=>upd(q.id,'missMessage',v)} placeholder="Quase! 😄"/>
               </div>
@@ -645,7 +693,7 @@ function DesignTab({retro,onUpdate}) {
   return html`<div>
     <${TabH} title="Design & Tema" sub="Personalize a aparência visual"/>
     <${Sec} title="Estilo Visual">
-      <div style=${{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+      <div class="form-grid-2" style=${{gap:10}}>
         ${STYLES.map(s=>html`<button key=${s.id} onClick=${()=>applyStyle(s)}
           style=${{position:'relative',padding:16,borderRadius:14,textAlign:'left',border:retro.theme.style===s.id?'1px solid rgba(201,169,110,0.4)':'1px solid rgba(255,255,255,0.07)',background:retro.theme.style===s.id?'rgba(201,169,110,0.08)':'rgba(255,255,255,0.02)',cursor:'pointer',fontFamily:'inherit'}}>
           <div style=${{height:36,borderRadius:10,background:`linear-gradient(135deg,${s.colors.primaryColor}44,${s.colors.bgColor})`,marginBottom:10,border:'1px solid rgba(255,255,255,0.06)'}}/>
@@ -883,7 +931,7 @@ function PublishTab({retro,onUpdate,onSave}) {
     </${Sec}>
 
     <${Sec} title="Resumo">
-      <div style=${{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
+      <div class="form-grid-3">
         ${[{v:retro.views||0,l:'Visitas',e:'👁'},{v:active,l:'Seções',e:'⚡'},{v:retro.timeline.length,l:'Eventos',e:'📅'},{v:retro.gallery.length,l:'Fotos',e:'🖼'},{v:retro.quiz.length,l:'Perguntas',e:'❓'},{v:retro.status==='published'?'Live':'Off',l:'Status',e:retro.status==='published'?'🟢':'⚪'}].map(s=>html`
           <div key=${s.l} style=${{padding:'14px 10px',borderRadius:14,border:'1px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)',textAlign:'center'}}>
             <div style=${{fontSize:20,marginBottom:4}}>${s.e}</div>
