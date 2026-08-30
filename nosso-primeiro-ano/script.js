@@ -50,16 +50,92 @@ if(!window.__RETRO_DATA__){
 })();
 }
 
-const STATE={currentScreen:"screen-cover",quizIndex:0,quizScore:0,motivosVistos:new Set(),motivoAtual:null,screenOrder:["screen-cover","screen-intro","screen-quiz","screen-timeline","screen-impact","screen-motivos","screen-final","screen-presente"],musicPlaying:false};
+const STATE={currentScreen:"screen-cover",quizIndex:0,quizScore:0,motivosVistos:new Set(),motivoAtual:null,screenOrder:["screen-cover","screen-intro","screen-quiz","screen-timeline","screen-gallery","screen-impact","screen-motivos","screen-final","screen-presente"],musicPlaying:false};
 const $=id=>document.getElementById(id);
 
+function applyTheme() {
+  if (!APP_DATA.tema) return;
+  const root = document.documentElement;
+  
+  const hexToRgb = hex => {
+    let h = hex.replace('#', '');
+    if(h.length===3) h = h.split('').map(c=>c+c).join('');
+    return parseInt(h.substring(0,2),16)+','+parseInt(h.substring(2,4),16)+','+parseInt(h.substring(4,6),16);
+  };
+  
+  if (APP_DATA.tema.primaryColor) {
+    root.style.setProperty('--gold', APP_DATA.tema.primaryColor);
+    const rgb = hexToRgb(APP_DATA.tema.primaryColor);
+    root.style.setProperty('--border', `rgba(${rgb},0.18)`);
+    root.style.setProperty('--shadow-gold', `0 0 40px rgba(${rgb},0.12)`);
+    
+    // Inject dynamic CSS to override hardcoded rgba
+    let style = document.getElementById('dynamic-theme');
+    if (!style) { style = document.createElement('style'); style.id = 'dynamic-theme'; document.head.appendChild(style); }
+    
+    let secRgb = APP_DATA.tema.secondaryColor ? hexToRgb(APP_DATA.tema.secondaryColor) : '192,96,112';
+    
+    style.innerHTML = `
+      .btn-primary { background: linear-gradient(135deg, rgba(${rgb},0.15), rgba(${rgb},0.05)); }
+      .btn-primary:hover { background: linear-gradient(135deg, rgba(${rgb},0.28), rgba(${rgb},0.1)); box-shadow: 0 0 24px rgba(${rgb},0.2), var(--shadow); }
+      .btn-ripple { background: rgba(${rgb},0.3); }
+      .screen-bg-pattern { background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(${rgb},0.06) 0%, transparent 70%), radial-gradient(ellipse 50% 80% at 80% 100%, rgba(${secRgb},0.05) 0%, transparent 60%); }
+      .impact-number { text-shadow: 0 0 60px rgba(${rgb},0.25); }
+      .quiz-option:hover { background: rgba(${rgb},0.08); }
+    `;
+  }
+  
+  if (APP_DATA.tema.secondaryColor) {
+    root.style.setProperty('--rose', APP_DATA.tema.secondaryColor);
+  }
+  
+  if (APP_DATA.tema.bgColor) {
+    root.style.setProperty('--bg', APP_DATA.tema.bgColor);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', APP_DATA.tema.bgColor);
+  }
+  
+  if (APP_DATA.tema.font) {
+    const fonts = {
+      'cormorant': "'Cormorant Garamond', Georgia, serif",
+      'inter': "system-ui, sans-serif",
+      'playfair': "'Playfair Display', Georgia, serif"
+    };
+    if (fonts[APP_DATA.tema.font]) {
+      root.style.setProperty('--font-display', fonts[APP_DATA.tema.font]);
+    }
+  }
+}
+
+
 document.addEventListener("DOMContentLoaded",()=>{
-  loadProgress(); populateCover(); populateIntro(); populateTimeline();
+  applyTheme(); loadProgress(); applyTheme(); populateCover(); populateIntro(); populateTimeline();
   populateMotivos(); populateFinal(); populatePresente();
   setupQuiz(); setupMusic(); setupButtons();
   createParticles("cover-particles",18);
   setTimeout(()=>{ $("loader").classList.add("hidden"); showMusicBtn(); },2400);
   updateProgressBar();
+});
+
+window.addEventListener('message', (e) => {
+  if (e.data?.type === 'UPDATE_RETRO') {
+    const data = e.data.data;
+    Object.assign(APP_DATA, {
+      casal: { meuNome: data.couple.name1, nomeDela: data.couple.name2, apelido: data.couple.nickname },
+      datas: { matchDate: data.couple.matchDate, primeiroEncontro: "", primeiroBeijo: "", primeiraViajem: "", pedidoNamoro: "", nossoAp: "", aniversario1Ano: data.couple.startDate },
+      textos: { titulo: data.content.title, subtitulo: data.content.subtitle, mensagemInicial: data.content.intro, introducao: data.content.intro, mensagemFinal: data.content.finalMessage, localPresenteFinal: data.content.surpriseText },
+      quiz: data.quiz.map(q => ({ pergunta: q.question, opcoes: q.options, correta: q.correct, acerto: q.hitMessage, erro: q.missMessage })),
+      timeline: data.timeline.map(t => ({ titulo: t.title, data: t.date, descricao: t.description, foto: t.photo })),
+      motivos: data.cartas ? data.cartas.map(c => c.texto) : [],
+      musicas: { ativada: data.music.autoplay, arquivo: data.music.url },
+      fotosGerais: { capa: data.couple.cover || "", fundo: "" },
+      galeria: data.gallery || [],
+      tema: data.theme || {}
+    });
+    applyTheme();
+    populateCover(); populateIntro(); populateTimeline(); populateGallery();
+    populateMotivos(); populateFinal(); populatePresente();
+    setupQuiz();
+  }
 });
 
 function populateCover(){ const t=$("cover-title");if(t)t.textContent=APP_DATA.textos.titulo||"Nosso Primeiro Ano ❤️"; const s=$("cover-subtitle");if(s)s.textContent=APP_DATA.textos.subtitulo; const d=$("cover-date");if(d)d.textContent=APP_DATA.datas.aniversario1Ano; const bg=$("cover-bg");if(bg&&APP_DATA.fotosGerais.capa){bg.style.backgroundImage=`url('${APP_DATA.fotosGerais.capa}')`;bg.style.display="block";} }
@@ -72,6 +148,18 @@ function populateTimeline(){
   });
   const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible");}),{threshold:0.15});
   list.querySelectorAll(".timeline-item").forEach(el=>obs.observe(el));
+}
+function populateGallery(){
+  const grid=$("gallery-grid");if(!grid)return; grid.innerHTML="";
+  if(!APP_DATA.galeria) return;
+  APP_DATA.galeria.forEach((foto, i) => {
+    const el = document.createElement("div");
+    el.style.cssText = `background:#fff;padding:8px 8px 30px;border-radius:4px;box-shadow:0 4px 15px rgba(0,0,0,0.15);transform:rotate(${Math.random()*6-3}deg);transition:transform 0.3s ease;cursor:pointer;`;
+    el.onmouseenter = () => el.style.transform = `scale(1.05) rotate(0deg)`;
+    el.onmouseleave = () => el.style.transform = `rotate(${Math.random()*6-3}deg)`;
+    el.innerHTML = `<div style="width:100%;aspect-ratio:1;border-radius:2px;overflow:hidden;background:#eee;"><img src="${foto.url}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy"/></div>`;
+    grid.appendChild(el);
+  });
 }
 function populateMotivos(){ const saved=localStorage.getItem("motivosVistos"); if(saved){try{JSON.parse(saved).forEach(i=>STATE.motivosVistos.add(i));}catch(_){}} updateMotivosContador(); }
 function populateFinal(){ const m=$("final-mensagem");if(m)m.textContent=APP_DATA.textos.mensagemFinal; const a=$("final-assinatura");if(a)a.textContent=`— ${APP_DATA.casal.meuNome}`; }
@@ -128,7 +216,7 @@ function toggleMusic(){ const audio=$("bg-music"),btn=$("music-btn");if(!audio||
 function goToScreen(screenId){ const current=document.querySelector(".screen.active"),next=$(screenId);if(!next||current===next)return;if(current){current.classList.add("exit");setTimeout(()=>current.classList.remove("active","exit"),650);}setTimeout(()=>{next.classList.add("active");next.scrollTop=0;STATE.currentScreen=screenId;updateProgressBar();saveProgress();onScreenEnter(screenId);},current?300:0); }
 function onScreenEnter(screenId){ switch(screenId){case"screen-quiz":renderQuizQuestion();setTimeout(()=>renderQuizQuestion(),150);setTimeout(()=>renderQuizQuestion(),500);break;case"screen-impact":startImpactAnimation();break;case"screen-motivos":if(STATE.motivoAtual===null)showNextMotivo();break;case"screen-final":setTimeout(launchConfetti,600);break;case"screen-presente":setTimeout(launchHearts,400);break;} }
 function setupButtons(){
-  const pairs=[["btn-start",()=>{ripple($("btn-start"));setTimeout(()=>goToScreen("screen-intro"),150);}],["btn-intro-next",()=>goToScreen("screen-quiz")],["btn-quiz-done",()=>{ripple($("btn-quiz-done"));setTimeout(()=>goToScreen("screen-timeline"),150);}],["btn-timeline-next",()=>{ripple($("btn-timeline-next"));setTimeout(()=>goToScreen("screen-impact"),150);}],["btn-open-motivos",()=>{ripple($("btn-open-motivos"));setTimeout(()=>goToScreen("screen-motivos"),150);}],["btn-next-motivo",()=>showNextMotivo()],["btn-motivos-done",()=>goToScreen("screen-final")],["btn-reveal",()=>{ripple($("btn-reveal"));setTimeout(()=>goToScreen("screen-presente"),150);}],["btn-restart",()=>{if(confirm("Recomeçar?"))resetApp();}]];
+  const pairs=[["btn-start",()=>{ripple($("btn-start"));setTimeout(()=>goToScreen("screen-intro"),150);}],["btn-intro-next",()=>goToScreen("screen-quiz")],["btn-quiz-done",()=>{ripple($("btn-quiz-done"));setTimeout(()=>goToScreen("screen-timeline"),150);}],["btn-timeline-next",()=>{ripple($("btn-timeline-next"));setTimeout(()=>goToScreen("screen-gallery"),150);}],["btn-gallery-next",()=>{ripple($("btn-gallery-next"));setTimeout(()=>goToScreen("screen-impact"),150);}],["btn-open-motivos",()=>{ripple($("btn-open-motivos"));setTimeout(()=>goToScreen("screen-motivos"),150);}],["btn-next-motivo",()=>showNextMotivo()],["btn-motivos-done",()=>goToScreen("screen-final")],["btn-reveal",()=>{ripple($("btn-reveal"));setTimeout(()=>goToScreen("screen-presente"),150);}],["btn-restart",()=>{if(confirm("Recomeçar?"))resetApp();}]];
   pairs.forEach(([id,fn])=>{const el=$(id);if(el)el.addEventListener("click",fn);});
   const btnDone=$("btn-motivos-done");if(btnDone){btnDone.style.opacity="0";btnDone.style.pointerEvents="none";}
 }

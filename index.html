@@ -31,6 +31,7 @@
 import { h, render, Fragment } from 'https://esm.sh/preact@10.22.0';
 import { useState, useEffect, useCallback, useRef } from 'https://esm.sh/preact@10.22.0/hooks';
 import htm from 'https://esm.sh/htm@3.1.1';
+import { DataStore, generateSlug } from '/data/store.js';
 const html = htm.bind(h);
 
 // ── ÍCONES SVG ──────────────────────────────────────────
@@ -121,11 +122,7 @@ const makeEvent = () => ({id:uid(),title:'',description:'',date:'',location:'',p
 const makeQuiz  = () => ({id:uid(),question:'',options:['','','',''],correct:0,hitMessage:'Acertou! 🥰',missMessage:'Quase! 😄'});
 
 // ── STORAGE ──────────────────────────────────────────────
-const STORE_KEY = 'retro_admin_v4';
-const store = {
-  load: () => { try{return JSON.parse(localStorage.getItem(STORE_KEY)||'[]');}catch{return[];} },
-  save: d  => { try{localStorage.setItem(STORE_KEY,JSON.stringify(d));}catch{} }
-};
+// Now using imported DataStore from /data/store.js
 
 // ── SHARED UI ────────────────────────────────────────────
 function Inp({label,value,onChange,placeholder,type='text',rows,className=''}) {
@@ -184,7 +181,7 @@ function Toast({message,type}) {
 
 // ── APP ──────────────────────────────────────────────────
 function App() {
-  const [retros, setRetros] = useState(()=>store.load());
+  const [retros, setRetros] = useState(()=>DataStore.listRetrospectives());
   const [view, setView] = useState('dashboard');
   const [editId, setEditId] = useState(null);
   const [current, setCurrent] = useState(null);
@@ -192,7 +189,7 @@ function App() {
   const [preview, setPreview] = useState(false);
   const [toast, setToast] = useState(null);
 
-  useEffect(()=>{ store.save(retros); },[retros]);
+  useEffect(()=>{ DataStore.saveAll(retros); },[retros]);
 
   const showToast = useCallback((msg,type='success')=>{ setToast({msg,type}); setTimeout(()=>setToast(null),3000); },[]);
   const handleCreate = ()=>{ setCurrent(makeRetro()); setEditId(null); setTab('basic'); setView('editor'); };
@@ -200,7 +197,7 @@ function App() {
 
   const handleSave = useCallback((status='draft')=>{
     if(!current)return;
-    const slug = current.slug || slugify(`${current.couple.name1} e ${current.couple.name2}`);
+    const slug = current.slug || generateSlug(`${current.couple.name1} e ${current.couple.name2}`);
     const updated = {...current,status,slug,updatedAt:new Date().toISOString()};
     if(editId){ setRetros(p=>p.map(r=>r.id===editId?updated:r)); }
     else { setRetros(p=>[updated,...p]); setEditId(updated.id); }
@@ -252,10 +249,6 @@ function Dashboard({retros,onCreate,onEdit,onDelete,onDuplicate,onPreview}) {
         <button onClick=${onCreate} style=${{display:'flex',alignItems:'center',gap:8,padding:'10px 22px',background:'#c9a96e',border:'none',borderRadius:12,color:'#000',fontSize:13,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
           <${IC.Plus} s=${15}/> Nova Retrospectiva
         </button>
-        <a href="/retro.html" target="_blank"
-          style=${{display:'flex',alignItems:'center',gap:8,padding:'10px 20px',background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.12)',borderRadius:12,color:'rgba(255,255,255,0.7)',fontSize:13,cursor:'pointer',fontFamily:'inherit',textDecoration:'none'}}>
-          🌐 Abrir Site
-        </a>
       </div>
     </header>
     <main style=${{maxWidth:1100,margin:'0 auto',padding:'40px 32px'}}>
@@ -314,11 +307,15 @@ function RetroCard({retro,onEdit,onDelete,onDuplicate,onPreview}) {
     <div style=${{padding:16}}>
       <div style=${{fontSize:13,fontWeight:500,color:'#fff',marginBottom:3,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>${retro.content.title||'Sem título'}</div>
       <div style=${{fontSize:11,color:'rgba(255,255,255,0.25)',marginBottom:14}}>${timeAgo(retro.updatedAt)}</div>
-      <div style=${{display:'grid',gridTemplateColumns:'1fr auto auto auto',gap:6}}>
+      <div style=${{display:'grid',gridTemplateColumns:'1fr auto auto auto auto',gap:6}}>
         <button onClick=${onEdit} style=${btn}
           onMouseEnter=${e=>{e.currentTarget.style.background='rgba(201,169,110,0.12)';e.currentTarget.style.color='#c9a96e';e.currentTarget.style.borderColor='rgba(201,169,110,0.25)';}}
           onMouseLeave=${e=>{e.currentTarget.style.background='rgba(255,255,255,0.04)';e.currentTarget.style.color='rgba(255,255,255,0.4)';e.currentTarget.style.borderColor='rgba(255,255,255,0.08)';}}
         ><${IC.Edit} s=${12}/> Editar</button>
+        <a href="/r/${retro.slug || 'preview'}" target="_blank" onClick=${e => { if(retro.status !== 'published') { e.preventDefault(); alert('Publique primeiro!'); } }} style=${{...btn, padding:'0 10px', textDecoration: 'none', opacity: retro.status === 'published' ? 1 : 0.4}}
+          onMouseEnter=${e=>{e.currentTarget.style.background='rgba(16,185,129,0.12)';e.currentTarget.style.color='#34d399';}}
+          onMouseLeave=${e=>{e.currentTarget.style.background='rgba(255,255,255,0.04)';e.currentTarget.style.color='rgba(255,255,255,0.4)';}}
+        ><${IC.Globe} s=${12}/></a>
         ${[
           {icon:html`<${IC.Eye} s=${13}/>`,  action:onPreview,  hb:'rgba(255,255,255,0.08)'},
           {icon:html`<${IC.Copy} s=${13}/>`, action:onDuplicate,hb:'rgba(255,255,255,0.08)'},
@@ -340,6 +337,15 @@ function RetroCard({retro,onEdit,onDelete,onDuplicate,onPreview}) {
 function Editor({retro,tab,onTabChange,onUpdate,onSave,onBack,onPreview}) {
   const [saving,setSaving]=useState(false);
   const save=useCallback(async(status)=>{ setSaving(true); await new Promise(r=>setTimeout(r,350)); onSave(status); setSaving(false); },[onSave]);
+  
+  useEffect(() => {
+    // Send update to iframe when retro changes
+    const iframe = document.getElementsByName('preview-frame')[0];
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({ type: 'UPDATE_RETRO', data: retro }, '*');
+    }
+  }, [retro]);
+
   const couple=[retro.couple.name1,retro.couple.name2].filter(Boolean).join(' & ')||'Nova Retrospectiva';
   const sideBtn={display:'flex',alignItems:'center',justifyContent:'center',gap:6,padding:'9px',borderRadius:10,fontSize:12,cursor:'pointer',fontFamily:'inherit',width:'100%'};
   return html`<div style=${{display:'flex',height:'100vh',overflow:'hidden'}}>
@@ -369,7 +375,7 @@ function Editor({retro,tab,onTabChange,onUpdate,onSave,onBack,onPreview}) {
         <button onClick=${()=>save('published')} disabled=${saving} style=${{...sideBtn,background:'#c9a96e',border:'none',color:'#000',fontWeight:600}}><${IC.Globe} s=${13}/> Publicar</button>
       </div>
     </aside>
-    <main style=${{flex:1,overflowY:'auto',background:'#0a0a12'}}>
+    <main style=${{flex:1,overflowY:'auto',background:'#0a0a12',borderRight:'1px solid rgba(255,255,255,0.06)'}}>
       <div style=${{maxWidth:600,margin:'0 auto',padding:'44px 40px'}} class="fade-in">
         ${tab==='basic'    &&html`<${BasicTab}    retro=${retro} onUpdate=${onUpdate}/>`}
         ${tab==='timeline' &&html`<${TimelineTab} retro=${retro} onUpdate=${onUpdate}/>`}
@@ -382,6 +388,13 @@ function Editor({retro,tab,onTabChange,onUpdate,onSave,onBack,onPreview}) {
         ${tab==='publish'  &&html`<${PublishTab}  retro=${retro} onUpdate=${onUpdate} onSave=${save}/>`}
       </div>
     </main>
+    <aside style=${{width:'40%',minWidth:350,background:'#000',display:'flex',flexDirection:'column'}}>
+      <div style=${{padding:'12px 16px',borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',alignItems:'center',justifyContent:'space-between',fontSize:12,color:'rgba(255,255,255,0.4)'}}>
+        <span style=${{display:'flex',alignItems:'center',gap:6}}><${IC.Eye} s=${12}/> Preview em tempo real</span>
+        <a href="/r/${retro.slug||'preview'}" target="_blank" style=${{color:'#c9a96e',textDecoration:'none',display:'flex',alignItems:'center',gap:4}}>Abrir Nova Aba <${IC.Globe} s=${10}/></a>
+      </div>
+      <iframe src="/r/${retro.slug||'preview'}" style=${{width:'100%',flex:1,border:'none'}} name="preview-frame"></iframe>
+    </aside>
   </div>`;
 }
 
@@ -479,12 +492,16 @@ function TimelineTab({retro,onUpdate}) {
 
 // ── GALLERY TAB ──────────────────────────────────────────
 function GalleryTab({retro,onUpdate}) {
-  const ref=useRef(); const [hov,setHov]=useState(null);
+  const ref=useRef(); const [hov,setHov]=useState(null); const [drag,setDrag]=useState(null);
   const upload=files=>Array.from(files).forEach(f=>{ const r=new FileReader(); r.onload=e=>onUpdate('gallery',[...retro.gallery,{id:uid(),url:e.target.result,caption:'',isCover:retro.gallery.length===0}]); r.readAsDataURL(f); });
   const rm=id=>{ const f=retro.gallery.filter(p=>p.id!==id); if(f.length&&!f.some(p=>p.isCover))f[0].isCover=true; onUpdate('gallery',f); };
   const setCover=id=>onUpdate('gallery',retro.gallery.map(p=>({...p,isCover:p.id===id})));
+  
+  const onDS=i=>setDrag(i);
+  const onDO=(e,i)=>{ e.preventDefault(); if(drag===null||drag===i)return; const l=[...retro.gallery]; const[it]=l.splice(drag,1); l.splice(i,0,it); onUpdate('gallery',l); setDrag(i); };
+
   return html`<div>
-    <${TabH} title="Galeria de Fotos" sub="${retro.gallery.length} foto${retro.gallery.length!==1?'s':''}  ·  ⭐ = capa"/>
+    <${TabH} title="Galeria de Fotos" sub="${retro.gallery.length} foto${retro.gallery.length!==1?'s':''}  ·  ⭐ = capa  ·  Arraste para reordenar"/>
     <div style=${{border:'2px dashed rgba(255,255,255,0.08)',borderRadius:20,padding:'40px 32px',textAlign:'center',cursor:'pointer',marginBottom:24,transition:'border-color 0.2s'}}
       onDrop=${e=>{e.preventDefault();upload(e.dataTransfer.files);}}
       onDragOver=${e=>{e.preventDefault();e.currentTarget.style.borderColor='rgba(201,169,110,0.35)';}}
@@ -499,13 +516,14 @@ function GalleryTab({retro,onUpdate}) {
       <input ref=${ref} type="file" accept="image/*" multiple style=${{display:'none'}} onInput=${e=>upload(e.target.files)}/>
     </div>
     ${retro.gallery.length>0&&html`<div style=${{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
-      ${retro.gallery.map(p=>html`<div key=${p.id}
-        style=${{position:'relative',borderRadius:14,overflow:'hidden',aspectRatio:'1',border:'1px solid rgba(255,255,255,0.07)'}}
+      ${retro.gallery.map((p,i)=>html`<div key=${p.id}
+        draggable=${true} onDragStart=${()=>onDS(i)} onDragOver=${e=>onDO(e,i)} onDragEnd=${()=>setDrag(null)}
+        style=${{position:'relative',borderRadius:14,overflow:'hidden',aspectRatio:'1',border:'1px solid rgba(255,255,255,0.07)',cursor:'grab',opacity:drag===i?0.4:1,transition:'opacity 0.2s'}}
         onMouseEnter=${()=>setHov(p.id)} onMouseLeave=${()=>setHov(null)}>
         <img src=${p.url} style=${{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/>
         ${hov===p.id&&html`<div style=${{position:'absolute',inset:0,background:'rgba(0,0,0,0.55)',display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
-          <button onClick=${()=>setCover(p.id)} style=${{padding:'8px 10px',borderRadius:10,border:'none',cursor:'pointer',background:p.isCover?'#c9a96e':'rgba(255,255,255,0.2)',color:p.isCover?'#000':'#fff'}}><${IC.Star} s=${13}/></button>
-          <button onClick=${()=>rm(p.id)} style=${{padding:'8px 10px',borderRadius:10,background:'rgba(239,68,68,0.8)',border:'none',color:'#fff',cursor:'pointer'}}><${IC.Trash} s=${13}/></button>
+          <button onClick=${()=>setCover(p.id)} style=${{padding:'8px 10px',borderRadius:10,border:'none',cursor:'pointer',background:p.isCover?'#c9a96e':'rgba(255,255,255,0.2)',color:p.isCover?'#000':'#fff'}} title="Definir como Capa"><${IC.Star} s=${13}/></button>
+          <button onClick=${()=>rm(p.id)} style=${{padding:'8px 10px',borderRadius:10,background:'rgba(239,68,68,0.8)',border:'none',color:'#fff',cursor:'pointer'}} title="Remover"><${IC.Trash} s=${13}/></button>
         </div>`}
         ${p.isCover&&html`<div style=${{position:'absolute',top:8,left:8,padding:'3px 8px',borderRadius:8,background:'#c9a96e',fontSize:10,fontWeight:600,color:'#000'}}>Capa</div>`}
       </div>`)}
@@ -516,13 +534,17 @@ function GalleryTab({retro,onUpdate}) {
 // ── QUIZ TAB ─────────────────────────────────────────────
 function QuizTab({retro,onUpdate}) {
   const [exp,setExp]=useState(null);
+  const [drag,setDrag]=useState(null);
   const add=()=>{ const q=makeQuiz(); onUpdate('quiz',[...retro.quiz,q]); setExp(q.id); };
   const rm=id=>onUpdate('quiz',retro.quiz.filter(q=>q.id!==id));
   const upd=(id,k,v)=>onUpdate('quiz',retro.quiz.map(q=>q.id===id?{...q,[k]:v}:q));
   const updOpt=(id,oi,v)=>onUpdate('quiz',retro.quiz.map(q=>{ if(q.id!==id)return q; const o=[...q.options]; o[oi]=v; return{...q,options:o}; }));
+  const onDS=i=>setDrag(i);
+  const onDO=(e,i)=>{ e.preventDefault(); if(drag===null||drag===i)return; const l=[...retro.quiz]; const[it]=l.splice(drag,1); l.splice(i,0,it); onUpdate('quiz',l); setDrag(i); };
+
   return html`<div>
     <div style=${{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:32}}>
-      <${TabH} title="Quiz do Casal" sub="${retro.quiz.length} pergunta${retro.quiz.length!==1?'s':''}"/>
+      <${TabH} title="Quiz do Casal" sub="${retro.quiz.length} pergunta${retro.quiz.length!==1?'s':''}  ·  Arraste para reordenar"/>
       <button onClick=${add} style=${{display:'flex',alignItems:'center',gap:7,padding:'9px 18px',background:'rgba(201,169,110,0.1)',border:'1px solid rgba(201,169,110,0.25)',borderRadius:12,color:'#c9a96e',fontSize:13,cursor:'pointer',fontFamily:'inherit',flexShrink:0}}>
         <${IC.Plus} s=${14}/> Adicionar
       </button>
@@ -533,8 +555,11 @@ function QuizTab({retro,onUpdate}) {
           <div style=${{fontSize:13,color:'rgba(255,255,255,0.25)'}}>Adicione perguntas sobre o casal</div>
         </div>`
       : html`<div style=${{display:'flex',flexDirection:'column',gap:8}}>
-          ${retro.quiz.map((q,qi)=>html`<div key=${q.id} style=${{borderRadius:16,border:'1px solid rgba(255,255,255,0.08)',overflow:'hidden',background:'rgba(255,255,255,0.02)'}}>
+          ${retro.quiz.map((q,qi)=>html`<div key=${q.id} 
+            draggable=${true} onDragStart=${()=>onDS(qi)} onDragOver=${e=>onDO(e,qi)} onDragEnd=${()=>setDrag(null)}
+            style=${{borderRadius:16,border:'1px solid rgba(255,255,255,0.08)',overflow:'hidden',background:'rgba(255,255,255,0.02)',opacity:drag===qi?0.4:1,transition:'opacity 0.2s'}}>
             <div onClick=${()=>setExp(exp===q.id?null:q.id)} style=${{display:'flex',alignItems:'center',gap:10,padding:'12px 14px',cursor:'pointer'}}>
+              <${IC.Grip} s=${14} />
               <span style=${{fontFamily:'monospace',fontSize:11,color:'rgba(201,169,110,0.5)'}}>#${qi+1}</span>
               <div style=${{flex:1,fontSize:13,color:'#fff',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>${q.question||'Sem pergunta'}</div>
               <button onClick=${e=>{e.stopPropagation();rm(q.id);}} style=${{padding:6,borderRadius:8,background:'none',border:'none',color:'rgba(255,255,255,0.15)',cursor:'pointer'}}
@@ -680,13 +705,17 @@ const makeCarta = () => ({id:uid(), texto:''});
 
 function CartasTab({retro,onUpdate}) {
   const [exp,setExp]=useState(null);
+  const [drag,setDrag]=useState(null);
   const cartas=retro.cartas||[];
   const add=()=>{ const c=makeCarta(); onUpdate('cartas',[...cartas,c]); setExp(c.id); };
   const rm=id=>{ onUpdate('cartas',cartas.filter(c=>c.id!==id)); if(exp===id)setExp(null); };
   const upd=(id,texto)=>onUpdate('cartas',cartas.map(c=>c.id===id?{...c,texto}:c));
+  const onDS=i=>setDrag(i);
+  const onDO=(e,i)=>{ e.preventDefault(); if(drag===null||drag===i)return; const l=[...cartas]; const[it]=l.splice(drag,1); l.splice(i,0,it); onUpdate('cartas',l); setDrag(i); };
+
   return html`<div>
     <div style=${{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:32}}>
-      <${TabH} title="Cartas de Amor" sub="${cartas.length} carta${cartas.length!==1?'s':''} · Reveladas uma por uma"/>
+      <${TabH} title="Cartas de Amor" sub="${cartas.length} carta${cartas.length!==1?'s':''}  ·  Arraste para reordenar"/>
       <button onClick=${add} style=${{display:'flex',alignItems:'center',gap:7,padding:'9px 18px',background:'rgba(201,169,110,0.1)',border:'1px solid rgba(201,169,110,0.25)',borderRadius:12,color:'#c9a96e',fontSize:13,cursor:'pointer',fontFamily:'inherit',flexShrink:0}}>
         <${IC.Plus} s=${14}/> Adicionar Carta
       </button>
@@ -698,8 +727,11 @@ function CartasTab({retro,onUpdate}) {
           <div style=${{fontSize:12,color:'rgba(255,255,255,0.18)'}}>Cada carta é revelada uma por uma na experiência</div>
         </div>`
       : html`<div style=${{display:'flex',flexDirection:'column',gap:8}}>
-          ${cartas.map((c,i)=>html`<div key=${c.id} style=${{borderRadius:16,border:'1px solid rgba(255,255,255,0.08)',overflow:'hidden',background:'rgba(255,255,255,0.02)'}}>
+          ${cartas.map((c,i)=>html`<div key=${c.id} 
+            draggable=${true} onDragStart=${()=>onDS(i)} onDragOver=${e=>onDO(e,i)} onDragEnd=${()=>setDrag(null)}
+            style=${{borderRadius:16,border:'1px solid rgba(255,255,255,0.08)',overflow:'hidden',background:'rgba(255,255,255,0.02)',opacity:drag===i?0.4:1,transition:'opacity 0.2s'}}>
             <div onClick=${()=>setExp(exp===c.id?null:c.id)} style=${{display:'flex',alignItems:'center',gap:10,padding:'12px 14px',cursor:'pointer'}}>
+              <${IC.Grip} s=${14} />
               <span style=${{fontFamily:'monospace',fontSize:11,color:'rgba(201,169,110,0.5)',flexShrink:0}}>💌 #${i+1}</span>
               <div style=${{flex:1,fontSize:13,color:c.texto?'#fff':'rgba(255,255,255,0.3)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
                 ${c.texto?c.texto.slice(0,55)+(c.texto.length>55?'...':''):'Carta vazia — clique para escrever'}
@@ -748,125 +780,45 @@ function SectionsTab({retro,onUpdate}) {
 // ── PUBLISH TAB ──────────────────────────────────────────
 function PublishTab({retro,onUpdate,onSave}) {
   const [copied,setCopied]=useState(false);
-  const [exporting,setExporting]=useState(false);
-  const SITE='https://our-timeline-sigma.vercel.app';
-  const slug=retro.slug||slugify(`${retro.couple.name1} e ${retro.couple.name2}`)||'minha-retrospectiva';
-  const url=`${SITE}/${slug}`;
+  const [publishing,setPublishing]=useState(false);
+  
+  const SITE = window.location.origin;
+  const slug = retro.slug || 'minha-retrospectiva';
+  const url = `${SITE}/r/${slug}`;
+  
   const copy=()=>{ navigator.clipboard?.writeText(url); setCopied(true); setTimeout(()=>setCopied(false),2000); };
-  const active=Object.values(retro.sections||{}).filter(Boolean).length;
-
-  const toAppData=r=>{
-    const fmt=iso=>{if(!iso)return'';try{return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});}catch{return iso;}};
-    return {
-      casal:{meuNome:r.couple.name1||'',nomeDela:r.couple.name2||'',apelido:r.couple.nickname||''},
-      datas:{matchDate:fmt(r.couple.matchDate),primeiroEncontro:'',primeiroBeijo:'',primeiraViajem:'',pedidoNamoro:fmt(r.couple.startDate),nossoAp:'',aniversario1Ano:fmt(r.couple.startDate)},
-      textos:{titulo:r.content.title||'Nosso Primeiro Ano ❤️',subtitulo:r.content.subtitle||'',mensagemInicial:r.content.intro||'',introducao:r.content.intro||'',mensagemFinal:r.content.finalMessage||'',localPresenteFinal:r.content.surpriseText||''},
-      quiz:r.quiz.map(q=>({pergunta:q.question,opcoes:q.options,correta:q.correct,acerto:q.hitMessage,erro:q.missMessage})),
-      timeline:r.timeline.map(e=>({titulo:e.title,data:e.date,descricao:e.description,foto:e.photo||''})),
-      motivos:(r.cartas||[]).map(c=>typeof c==='string'?c:c.texto||'').filter(Boolean),
-      musicas:{ativada:r.music.autoplay,arquivo:r.music.url||''},
-      fotosGerais:{capa:'',fundo:''}
-    };
-  };
-
-  const exportHTML=async()=>{
-  setExporting(true);
-  try {
-    // Busca todos os recursos do servidor
-    const [htmlR,cssR,jsR]=await Promise.all([
-      fetch('/retro.html'),
-      fetch('/style.css'),
-      fetch('/script.js')
-    ]);
-    if(!htmlR.ok) throw new Error('retro.html não encontrado no servidor');
-
-    let tmpl=await htmlR.text();
-    let css=(cssR.ok?await cssR.text():'');
-    let js=(jsR.ok?await jsR.text():'');
-
-    /* ── Corrige JS (funciona mesmo com versão antiga no servidor) ── */
-    if(!js.includes('window.__RETRO_DATA__||')&&!js.includes('window.__RETRO_DATA__ ||')){
-      js=js.replace('const APP_DATA = {','const APP_DATA = window.__RETRO_DATA__ || {');
-    }
-    if(!js.includes('APP_DATA.textos.titulo')){
-      js=js.replace(
-        'if(t)t.textContent="Nosso Primeiro Ano ❤️";',
-        'if(t)t.textContent=APP_DATA.textos.titulo||"Nosso Primeiro Ano ❤️";'
-      );
-    }
-    if(!js.includes("titulo:")){
-      js=js.replace("subtitulo:","titulo:\"Nosso Primeiro Ano ❤️\",subtitulo:");
-    }
-    if(!js.includes('!window.__RETRO_DATA__')){
-      const ii=js.indexOf('(function(){const ds=APP_DATA.datas');
-      if(ii!==-1){const ie=js.indexOf('})();',ii)+5;const ob=js.slice(ii,ie);js=js.replace(ob,'if(!window.__RETRO_DATA__){'+ob+'}');}
-    }
-    // Corrige threshold do botão (versão antiga usa >=3 fixo)
-    if(!js.includes('Math.min(3,Math.max')){
-      js=js.replace(
-        'if(btnDone&&STATE.motivosVistos.size>=3){btnDone.style.opacity="1";btnDone.style.pointerEvents="all";}',
-        'if(btnDone){const thr=Math.min(3,Math.max(1,APP_DATA.motivos.length));if(STATE.motivosVistos.size>=thr){btnDone.style.opacity="1";btnDone.style.pointerEvents="all";}}'
-      );
-    }
-    // Guard motivos vazios
-    // Guard motivos: usa variável existente (sem redeclarar)
-    const _btnDone='btnDone=$(\'btn-motivos-done\'));';
-    if(js.includes(_btnDone)&&!js.includes('motivos.length===0')){
-      js=js.replace(_btnDone, _btnDone+'\n  if(!motivos||motivos.length===0){if(btnDone){btnDone.style.opacity="1";btnDone.style.pointerEvents="all";}return;}');
-    }
-
-    /* ── Corrige texto HTML (funciona mesmo com versão antiga) ── */
-    tmpl=tmpl.replace('>Por que eu te amo<','>Cartas de Amor<');
-    tmpl=tmpl.replace('>Um por um...<','>Uma por uma...<');
-    tmpl=tmpl.replace('id="btn-next-motivo">Próximo Motivo','id="btn-next-motivo">Próxima Carta');
-    tmpl=tmpl.replace('id="btn-next-motivo">Proximo Motivo','id="btn-next-motivo">Proxima Carta');
-
-    // Título personalizado
-    const couple=[retro.couple.name1,retro.couple.name2].filter(Boolean).join(' & ')||'Nossa Retrospectiva';
-    tmpl=tmpl.replace('<title>Nosso Primeiro Ano ❤️</title>','<title>'+couple+' ❤️</title>');
-
-    /* ── Inlina CSS ── */
-    if(css){
-      tmpl=tmpl.replace('<link rel="stylesheet" href="style.css"/>','<style>'+css+'</style>');
-    }
-
-    /* ── Injeta dados + Inlina JS ── */
-    const appDataStr=JSON.stringify(toAppData(retro)).replace(/<\//g,'<\\/');
-    const safeJs=js.replace(/<\/script>/gi,'<\\/script>');
-    const inlined=
-      '<script>\nwindow.__RETRO_DATA__='+appDataStr+';\n<'+'\/script>\n'+
-      '<script>\n'+safeJs+'\n<'+'\/script>';
-    tmpl=tmpl.replace('<script src="script.js"><'+'\/script>',inlined);
-
-    // Remove service worker (não necessário em arquivo standalone)
-    tmpl=tmpl.replace(/<script>[^<]*serviceWorker[^<]*<\/script>/gs,'');
-
-    /* ── Download ── */
-    const blob=new Blob([tmpl],{type:'text/html;charset=utf-8'});
-    const a=Object.assign(document.createElement('a'),{
-      href:URL.createObjectURL(blob),
-      download:slug+'.html'
-    });
-    a.click();
-
-  } catch(e){
-    alert('Erro ao exportar: '+e.message+'\n\nAbra o admin pelo Vercel (não como arquivo local).');
-  }
-  setExporting(false);
-};;
-
   const exportJSON=()=>{const b=new Blob([JSON.stringify(retro,null,2)],{type:'application/json'});const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:`${slug}.json`});a.click();};
 
-  return html`<div>
-    <${TabH} title="Publicação" sub="Gere um HTML por retrospectiva com sua própria URL"/>
+  const publishToServer = async () => {
+    setPublishing(true);
+    try {
+      onSave('published');
+      const res = await fetch('/api/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({...retro, slug, status: 'published'})
+      });
+      if (!res.ok) throw new Error('Erro ao publicar');
+      
+      alert(`Sucesso! Sua retrospectiva está no ar em:\n\n${url}`);
+    } catch(e) {
+      alert('Erro ao publicar: ' + e.message);
+    }
+    setPublishing(false);
+  };
 
-    <${Sec} title="Slug da URL">
+  const active=Object.values(retro.sections||{}).filter(Boolean).length;
+
+  return html`<div>
+    <${TabH} title="Publicação" sub="Sua retrospectiva online com uma URL mágica ❤️"/>
+
+    <${Sec} title="Link Público">
       <div style=${{fontSize:12,color:'rgba(255,255,255,0.4)',marginBottom:8,lineHeight:1.6}}>
-        Cada retrospectiva tem um caminho único. O arquivo gerado será servido automaticamente pelo Vercel na URL abaixo.
+        Sua retrospectiva ficará acessível para qualquer pessoa que tiver este link especial.
       </div>
       <div style=${{display:'flex',border:'1px solid rgba(255,255,255,0.09)',borderRadius:12,overflow:'hidden',background:'rgba(255,255,255,0.04)',marginBottom:10}}>
         <span style=${{padding:'12px 14px',fontSize:12,color:'rgba(255,255,255,0.25)',borderRight:'1px solid rgba(255,255,255,0.07)',whiteSpace:'nowrap',fontFamily:'monospace'}}>
-          ${SITE}/
+          ${SITE}/r/
         </span>
         <input value=${slug}
           onInput=${e=>onUpdate('slug',slugify(e.target.value))}
@@ -882,63 +834,51 @@ function PublishTab({retro,onUpdate,onSave}) {
       </div>
     </${Sec}>
 
-    <${Sec} title="Exportar HTML">
-      <div style=${{padding:16,borderRadius:14,border:'1px solid rgba(201,169,110,0.2)',background:'rgba(201,169,110,0.05)',marginBottom:12}}>
-        <div style=${{fontSize:13,color:'#c9a96e',fontWeight:600,marginBottom:6}}>
-          📄 Arquivo: ${slug}.html
+    <${Sec} title="Colocar no Ar">
+      <div style=${{padding:16,borderRadius:14,border:'1px solid rgba(201,169,110,0.2)',background:'rgba(201,169,110,0.05)',marginBottom:12,display:'flex',flexDirection:'column',gap:16}}>
+        <div>
+          <div style=${{fontSize:13,color:'#c9a96e',fontWeight:600,marginBottom:6}}>
+            🚀 Prontos para lançar?
+          </div>
+          <div style=${{fontSize:12,color:'rgba(255,255,255,0.4)',lineHeight:1.8}}>
+            Clique no botão abaixo para publicar sua retrospectiva no servidor.<br/>
+            Com isso, o link e as tags do cartão (Open Graph) para WhatsApp/Instagram estarão ativas.
+          </div>
         </div>
-        <div style=${{fontSize:12,color:'rgba(255,255,255,0.4)',lineHeight:1.8,marginBottom:14}}>
-          Cada retrospectiva é um arquivo HTML independente com todos os dados embutidos.<br/>
-          Após exportar, adicione o arquivo na raiz do seu projeto no Vercel.<br/>
-          Ele ficará acessível em <strong style=${{color:'rgba(255,255,255,0.65)'}}>${SITE}/${slug}</strong>
-        </div>
-        <button onClick=${exportHTML} disabled=${exporting}
-          style=${{display:'flex',alignItems:'center',gap:8,padding:'11px 22px',background:exporting?'rgba(201,169,110,0.4)':'#c9a96e',border:'none',borderRadius:11,color:'#000',fontSize:13,fontWeight:600,cursor:exporting?'wait':'pointer',fontFamily:'inherit',transition:'opacity 0.2s'}}>
-          <${IC.Download} s=${14}/> ${exporting?'Gerando arquivo...':'Exportar '+slug+'.html'}
+        <button onClick=${publishToServer} disabled=${publishing}
+          style=${{display:'flex',alignItems:'center',justifyContent:'center',gap:8,padding:'12px 22px',background:publishing?'rgba(201,169,110,0.4)':'#c9a96e',border:'none',borderRadius:11,color:'#000',fontSize:13,fontWeight:600,cursor:publishing?'wait':'pointer',fontFamily:'inherit',transition:'opacity 0.2s',width:'100%'}}>
+          <${IC.Globe} s=${14}/> ${publishing?'Publicando...':'Publicar Agora!'}
         </button>
-      </div>
-
-      <div style=${{padding:14,borderRadius:12,border:'1px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)'}}>
-        <div style=${{fontSize:11,color:'rgba(255,255,255,0.25)',textTransform:'uppercase',letterSpacing:3,marginBottom:10}}>Passo a passo</div>
-        <div style=${{display:'flex',flexDirection:'column',gap:8}}>
-          ${[
-            {n:'1',t:'Exporte o arquivo',d:`Clique em "Exportar ${slug}.html"`},
-            {n:'2',t:'Abra seu projeto no Vercel',d:'Acesse vercel.com → seu projeto → Files'},
-            {n:'3',t:'Faça upload do arquivo',d:`Arraste ${slug}.html para a raiz do projeto`},
-            {n:'4',t:'Acesse a URL',d:`${SITE}/${slug} ✅`},
-          ].map(s=>html`<div key=${s.n} style=${{display:'flex',gap:12,alignItems:'flex-start'}}>
-            <div style=${{width:22,height:22,borderRadius:'50%',background:'rgba(201,169,110,0.15)',border:'1px solid rgba(201,169,110,0.3)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,color:'#c9a96e',flexShrink:0,fontWeight:600}}>${s.n}</div>
-            <div>
-              <div style=${{fontSize:12,color:'rgba(255,255,255,0.7)',fontWeight:500}}>${s.t}</div>
-              <div style=${{fontSize:11,color:'rgba(255,255,255,0.3)',marginTop:2}}>${s.d}</div>
-            </div>
-          </div>`)}
-        </div>
       </div>
     </${Sec}>
 
     <${Sec} title="Status">
       <div style=${{padding:16,borderRadius:14,border:'1px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
-        <div><div style=${{fontSize:12,color:'rgba(255,255,255,0.3)',marginBottom:6}}>Status</div><${Badge} status=${retro.status}/></div>
+        <div><div style=${{fontSize:12,color:'rgba(255,255,255,0.3)',marginBottom:6}}>Status do Rascunho</div><${Badge} status=${retro.status}/></div>
         <div style=${{display:'flex',gap:8}}>
-          <button onClick=${()=>onSave('draft')} style=${{display:'flex',alignItems:'center',gap:6,padding:'9px 16px',background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.09)',borderRadius:11,color:'rgba(255,255,255,0.55)',fontSize:12,cursor:'pointer',fontFamily:'inherit'}}><${IC.Save} s=${12}/> Salvar Rascunho</button>
-          <button onClick=${()=>onSave('published')} style=${{display:'flex',alignItems:'center',gap:6,padding:'9px 18px',background:'#c9a96e',border:'none',borderRadius:11,color:'#000',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}><${IC.Globe} s=${12}/> Marcar Publicada</button>
+          <button onClick=${()=>onSave('draft')} style=${{display:'flex',alignItems:'center',gap:6,padding:'9px 16px',background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.09)',borderRadius:11,color:'rgba(255,255,255,0.55)',fontSize:12,cursor:'pointer',fontFamily:'inherit'}}><${IC.Save} s=${12}/> Salvar Local</button>
         </div>
       </div>
     </${Sec}>
 
-    <${Sec} title="Compartilhar">
-      <div style=${{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-        ${[
-          {label:'WhatsApp',emoji:'💬',action:()=>window.open(`https://wa.me/?text=${encodeURIComponent('Olha nossa retrospectiva! '+url)}`)},
-          {label:'Copiar Link',emoji:'🔗',action:copy},
-          {label:'Exportar JSON',emoji:'📦',action:exportJSON},
-          {label:'Nativo',emoji:'📤',action:()=>navigator.share?.({title:retro.content.title,url})},
-        ].map(b=>html`<button key=${b.label} onClick=${b.action}
-          style=${{display:'flex',alignItems:'center',gap:12,padding:'14px 16px',borderRadius:14,border:'1px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)',cursor:'pointer',fontFamily:'inherit',fontSize:13,color:'rgba(255,255,255,0.5)',transition:'all 0.15s'}}
-          onMouseEnter=${e=>{e.currentTarget.style.borderColor='rgba(255,255,255,0.14)';e.currentTarget.style.color='rgba(255,255,255,0.8)';e.currentTarget.style.background='rgba(255,255,255,0.04)';}}
-          onMouseLeave=${e=>{e.currentTarget.style.borderColor='rgba(255,255,255,0.07)';e.currentTarget.style.color='rgba(255,255,255,0.5)';e.currentTarget.style.background='rgba(255,255,255,0.02)';}}
-        ><span style=${{fontSize:20}}>${b.emoji}</span>${b.label}</button>`)}
+    <${Sec} title="Compartilhar & Acessar">
+      <div style=${{display:'flex',gap:16,alignItems:'stretch'}}>
+        <div style=${{flex:1,display:'grid',gridTemplateColumns:'1fr',gap:10}}>
+          ${[
+            {label:'WhatsApp',emoji:'💬',action:()=>window.open(`https://wa.me/?text=${encodeURIComponent('Fiz uma retrospectiva especial para a gente! Vem ver ❤️ ' + url)}`)},
+            {label:'Visualizar Online',emoji:'✨',action:()=>window.open(url)},
+            {label:'Exportar JSON (Backup)',emoji:'📦',action:exportJSON},
+            {label:'Compartilhar (Nativo)',emoji:'📤',action:()=>navigator.share?.({title:retro.content.title,url})},
+          ].map(b=>html`<button key=${b.label} onClick=${b.action}
+            style=${{display:'flex',alignItems:'center',gap:12,padding:'14px 16px',borderRadius:14,border:'1px solid rgba(255,255,255,0.07)',background:'rgba(255,255,255,0.02)',cursor:'pointer',fontFamily:'inherit',fontSize:13,color:'rgba(255,255,255,0.5)',transition:'all 0.15s'}}
+            onMouseEnter=${e=>{e.currentTarget.style.borderColor='rgba(255,255,255,0.14)';e.currentTarget.style.color='rgba(255,255,255,0.8)';e.currentTarget.style.background='rgba(255,255,255,0.04)';}}
+            onMouseLeave=${e=>{e.currentTarget.style.borderColor='rgba(255,255,255,0.07)';e.currentTarget.style.color='rgba(255,255,255,0.5)';e.currentTarget.style.background='rgba(255,255,255,0.02)';}}
+          ><span style=${{fontSize:20}}>${b.emoji}</span>${b.label}</button>`)}
+        </div>
+        <div style=${{width:140,display:'flex',flexDirection:'column',gap:8,alignItems:'center',justifyContent:'center',background:'rgba(255,255,255,0.02)',borderRadius:14,border:'1px solid rgba(255,255,255,0.07)',padding:12}}>
+          <img src=${`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(url)}`} style=${{width:'100%',borderRadius:8}} />
+          <div style=${{fontSize:10,color:'rgba(255,255,255,0.4)',textAlign:'center'}}>Leia o QR Code</div>
+        </div>
       </div>
     </${Sec}>
 
