@@ -33,7 +33,10 @@ if (client) {
       updated_at TIMESTAMP DEFAULT NOW(),
       published_at TIMESTAMP
     );
-  `.catch((err: any) => console.error("Auto-migrate error:", err));
+  `.catch((err: any) => console.error("Auto-migrate create error:", err));
+
+  client`ALTER TABLE retrospectives ENABLE ROW LEVEL SECURITY;`
+    .catch((err: any) => console.error("Auto-migrate RLS error:", err));
 }
 
 export const db = client ? drizzle(client, { schema }) : null as any;
