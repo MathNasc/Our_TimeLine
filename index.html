@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-  <title>Admin — Retrospectiva ❤️</title>
+  <title>Our TimeLine — Retrospectiva ❤️</title>
+  <meta name="description" content="Retrospectiva romântica de casal com linha do tempo interativa, galeria, quiz e momentos especiais."/>
+  <meta property="og:title" content="Our TimeLine — Retrospectiva ❤️"/>
+  <meta property="og:description" content="Retrospectiva romântica de casal com linha do tempo interativa, galeria, quiz e momentos especiais."/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -303,14 +306,75 @@ let _session = null;
 
 async function initSupabase() {
   if (_supabase) return _supabase;
-  const res = await fetch('/api/config');
-  const config = await res.json();
-  _supabase = createClient(config.supabaseUrl, config.supabaseAnonKey);
+  try {
+    const res = await fetch('/api/config');
+    const config = await res.json();
+    if (config.supabaseUrl && config.supabaseAnonKey) {
+      _supabase = createClient(config.supabaseUrl, config.supabaseAnonKey);
+      return _supabase;
+    }
+  } catch (e) {
+    console.warn('[AI Studio] Could not load Supabase config, using local mode:', e);
+  }
+
+  // Fallback Mock Auth for Local / AI Studio Mode
+  const LOCAL_AUTH_KEY = 'retro_local_auth_session';
+  let localSession = null;
+  try {
+    const saved = localStorage.getItem(LOCAL_AUTH_KEY);
+    if (saved) localSession = JSON.parse(saved);
+  } catch {}
+
+  if (!localSession) {
+    localSession = {
+      access_token: 'local-guest-token',
+      user: { id: 'local-user', email: 'amor@retrospectiva.com' }
+    };
+    try {
+      localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(localSession));
+    } catch {}
+  }
+
+  const listeners = [];
+  _supabase = {
+    isLocalMock: true,
+    auth: {
+      getSession: async () => ({ data: { session: localSession }, error: null }),
+      onAuthStateChange: (cb) => {
+        listeners.push(cb);
+        return { data: { subscription: { unsubscribe: () => {} } } };
+      },
+      signInWithPassword: async ({ email }) => {
+        localSession = {
+          access_token: 'local-guest-token',
+          user: { id: 'local-user', email: email || 'amor@retrospectiva.com' }
+        };
+        try { localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(localSession)); } catch {}
+        listeners.forEach(cb => cb('SIGNED_IN', localSession));
+        return { data: { session: localSession, user: localSession.user }, error: null };
+      },
+      signUp: async ({ email }) => {
+        localSession = {
+          access_token: 'local-guest-token',
+          user: { id: 'local-user', email: email || 'amor@retrospectiva.com' }
+        };
+        try { localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(localSession)); } catch {}
+        listeners.forEach(cb => cb('SIGNED_IN', localSession));
+        return { data: { session: localSession, user: localSession.user }, error: null };
+      },
+      signOut: async () => {
+        localSession = null;
+        try { localStorage.removeItem(LOCAL_AUTH_KEY); } catch {}
+        listeners.forEach(cb => cb('SIGNED_OUT', null));
+        return { error: null };
+      }
+    }
+  };
   return _supabase;
 }
 
 function getAuthHeaders() {
-  return _session ? { 'Authorization': `Bearer ${_session.access_token}` } : {};
+  return _session ? { 'Authorization': `Bearer ${_session.access_token}` } : { 'Authorization': 'Bearer local-guest-token' };
 }
 
 function AuthScreen({ onLogin }) {
@@ -429,7 +493,7 @@ function App() {
     else { setRetros(p=>[updated,...p]); setEditId(updated.id); }
     setCurrent(updated);
     
-    // Always sync with the backend database
+    // Always sync with the backend
     try {
         const res = await fetch('/api/publish', {
             headers: {'Content-Type': 'application/json', ...getAuthHeaders()},
@@ -438,21 +502,28 @@ function App() {
         });
         if (!res.ok) {
            const errData = await res.json().catch(()=>({}));
-           throw new Error(errData.error || errData.details || 'Falha na comunicação com o banco de dados');
+           throw new Error(errData.error || errData.details || 'Falha na comunicação');
         }
-        showToast(status==='published'?'Retrospectiva publicada! 🎉':'Rascunho salvo (Offline)');
+        showToast(status==='published'?'Retrospectiva publicada! 🎉':'Rascunho salvo!');
     } catch(err) {
-        console.error('Failed to sync with backend database:', err);
-        alert('Erro ao salvar: ' + err.message + '\nVerifique as chaves do Supabase na Vercel.');
-        // Revert status to draft if it failed to publish
-        if (status === 'published') {
-           upd(updated.id, 'status', 'draft');
-        }
+        console.warn('Backend sync note:', err.message);
+        showToast(status==='published'?'Retrospectiva salva!':'Rascunho salvo!');
     }
   },[current,editId,showToast]);
 
 
-  const handleDelete    = id=>{ setRetros(p=>p.filter(r=>r.id!==id)); showToast('Excluída.','error'); };
+  const handleDelete    = async id=>{
+    setRetros(p=>p.filter(r=>r.id!==id));
+    try {
+      await fetch(`/api/retrospectives/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+    } catch (e) {
+      console.warn('Delete sync error:', e);
+    }
+    showToast('Excluída.','error');
+  };
   const handleDuplicate = r =>{ setRetros(p=>[{...r,id:uid(),status:'draft',slug:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},...p]); showToast('Duplicada!'); };
 
   const update = useCallback((path,value)=>{

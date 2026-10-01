@@ -1,0 +1,8 @@
+{
+  "name": "Our TimeLine",
+  "description": "Retrospectiva romântica de casal com linha do tempo interativa, galeria, quiz e momentos especiais.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "nosso-primeiro-ano": {
+    "id": "retro-demo-1",
+    "owner_id": "local-user",
+    "slug": "nosso-primeiro-ano",
+    "status": "published",
+    "title": "Nosso Primeiro Ano ❤️",
+    "couple_name": "Moi ❤️",
+    "person_1": "Matheus",
+    "person_2": "Marcela",
+    "cover_image": "",
+    "data": {
+      "id": "retro-demo-1",
+      "status": "published",
+      "slug": "nosso-primeiro-ano",
+      "views": 12,
+      "createdAt": "2025-05-01T00:00:00.000Z",
+      "updatedAt": "2026-05-01T00:00:00.000Z",
+      "couple": {
+        "name1": "Matheus",
+        "name2": "Marcela",
+        "nickname": "Moi ❤️",
+        "startDate": "2025-05-01",
+        "matchDate": "2025-02-27",
+        "cover": ""
+      },
+      "content": {
+        "title": "Nosso Primeiro Ano ❤️",
+        "subtitle": "Uma pequena experiência para a pessoa mais importante da minha vida.",
+        "intro": "Eu escolhi você. E cada dia desde então me prova que foi a escolha mais certa que já fiz.",
+        "finalMessage": "Feliz 1 ano, meu amor. Que venham muitos outros, sempre ao seu lado.",
+        "surpriseText": "SOU EU!!! 🌹"
+      },
+      "timeline": [
+        {
+          "id": "ev-1",
+          "title": "O Nosso Match",
+          "date": "27 de fevereiro de 2025",
+          "description": "O dia em que demos match.",
+          "photo": ""
+        },
+        {
+          "id": "ev-2",
+          "title": "Primeiro Encontro",
+          "date": "22 de março de 2025",
+          "description": "Aquela noite que tudo começou. 💐🍫",
+          "photo": ""
+        },
+        {
+          "id": "ev-3",
+          "title": "O Pedido de Namoro",
+          "date": "01 de maio de 2025",
+          "description": "Quando eu oficialmente te escolhi.",
+          "photo": ""
+        },
+        {
+          "id": "ev-4",
+          "title": "Nossa Primeira Viagem",
+          "date": "01 de maio de 2025",
+          "description": "Descobrir novos lugares ao seu lado.",
+          "photo": ""
+        },
+        {
+          "id": "ev-5",
+          "title": "Nosso Primeiro Ano ❤️",
+          "date": "01 de maio de 2026",
+          "description": "Hoje. Um ano inteiro de você.",
+          "photo": ""
+        }
+      ],
+      "gallery": [],
+      "quiz": [
+        {
+          "id": "q-1",
+          "question": "Onde foi nosso primeiro encontro?",
+          "options": [
+            "Magia & Bruxaria",
+            "Vassoura Quebrada",
+            "Beco Hexagonal",
+            "Casa dos Bruxos"
+          ],
+          "correct": 1,
+          "hitMessage": "Acertou minha bruxinha! 🥰",
+          "missMessage": "Quase! Mas foi no Vassoura Quebrada 🪄"
+        },
+        {
+          "id": "q-2",
+          "question": "Qual foi nossa primeira viagem juntos?",
+          "options": [
+            "Campos do Jordão",
+            "Ubatuba",
+            "Santos",
+            "Paraty"
+          ],
+          "correct": 3,
+          "hitMessage": "Sim! e ainda teve pedido de namoro. 💍",
+          "missMessage": "Nãão! Foi quando começamos a namorar 💍"
+        }
+      ],
+      "music": {
+        "type": "url",
+        "url": "",
+        "autoplay": false
+      },
+      "cartas": [
+        {
+          "id": "c-1",
+          "texto": "Porque você ri do meu jeito torto de contar histórias"
+        },
+        {
+          "id": "c-2",
+          "texto": "Porque seu sorriso de manhã vale mais que qualquer coisa"
+        },
+        {
+          "id": "c-3",
+          "texto": "Porque você me faz querer ser melhor todos os dias"
+        }
+      ],
+      "theme": {
+        "primaryColor": "#c9a96e",
+        "secondaryColor": "#e8a0a0",
+        "bgColor": "#0a0a0f",
+        "style": "elegant",
+        "font": "cormorant",
+        "mode": "dark"
+      },
+      "sections": {
+        "counter": true,
+        "timeline": true,
+        "gallery": true,
+        "quiz": true,
+        "music": true,
+        "loveLetter": true,
+        "map": false,
+        "video": false
+      }
+    },
+    "theme": {
+      "primaryColor": "#c9a96e",
+      "secondaryColor": "#e8a0a0",
+      "bgColor": "#0a0a0f",
+      "style": "elegant",
+      "font": "cormorant",
+      "mode": "dark"
+    }
+  }
+}
